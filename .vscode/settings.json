@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "unistd.h": "c",
-        "thread_pool.h": "c"
+        "thread_pool.h": "c",
+        "string.h": "c",
+        "ngx_alloc.h": "c"
     }
 }

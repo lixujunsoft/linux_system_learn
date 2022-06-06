@@ -3,6 +3,7 @@
         "unistd.h": "c",
         "thread_pool.h": "c",
         "string.h": "c",
-        "ngx_alloc.h": "c"
+        "ngx_alloc.h": "c",
+        "ngx_core.h": "c"
     }
 }

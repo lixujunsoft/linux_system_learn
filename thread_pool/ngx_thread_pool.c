@@ -151,7 +151,7 @@ ngx_thread_task_post(ngx_thread_pool_t *tp, ngx_thread_task_t *task)
     if (tp->waiting >= tp->max_queue) {
         (void) ngx_thread_mutex_unlock(&tp->mtx);
 
-        printf("thread pool %s queue overflow: %ld tasks waiting", tp->name.data, tp->waiting);
+        printf("thread pool %s queue overflow: %ld tasks waiting\n", tp->name.data, tp->waiting);
         return NGX_ERROR;
     }
 
@@ -200,7 +200,7 @@ ngx_thread_pool_cycle(void *data)
 
     err = pthread_sigmask(SIG_BLOCK, &set, NULL);
     if (err) {
-        printf("pthread_sigmask() failed");
+        printf("pthread_sigmask() failed\n");
         return NULL;
     }
 
@@ -229,11 +229,11 @@ ngx_thread_pool_cycle(void *data)
             return NULL;
         }
 
-        printf("run task #%ld in thread pool \"%s\"", task->id, tp->name.data);
+        printf("run task #%ld in thread pool \"%s\"\n", task->id, tp->name.data);
 
         task->handler(task->ctx);
 
-        printf("complete task #%ld in thread pool \"%s\"", task->id, tp->name.data);
+        printf("complete task #%ld in thread pool \"%s\"\n", task->id, tp->name.data);
 
         task->next = NULL;
 
@@ -248,13 +248,10 @@ ngx_thread_pool_cycle(void *data)
     }
 }
 
-
 static void
 ngx_thread_pool_handler()
 {
     ngx_thread_task_t  *task;
-
-    printf("thread pool handler");
 
     ngx_thread_mutex_lock(&thread_mutex);
     task = ngx_thread_pool_done.first;
@@ -263,7 +260,7 @@ ngx_thread_pool_handler()
     ngx_thread_mutex_unlock(&thread_mutex);
 
     while (task) {
-       printf("run completion handler for task #%ld", task->id);
+       printf("run completion handler for task #%ld\n", task->id);
         task->active = 0;
         task = task->next;
     }
@@ -316,5 +313,10 @@ ngx_thread_pool_get(ngx_array_t *arrayPool, ngx_str_t *name)
     }
 
     return NULL;
+}
+
+void ngx_thread_pool_done_queue_init()
+{
+    ngx_thread_pool_queue_init(&ngx_thread_pool_done);
 }
 

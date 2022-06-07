@@ -1,5 +1,26 @@
-#include "ngx_array.h"
+#include "ngx_typedef.h"
 #include "ngx_core.h"
+
+ngx_int_t
+ngx_array_init(ngx_array_t *array, ngx_pool_t *pool, ngx_uint_t n, size_t size)
+{
+    /*
+     * set "array->nelts" before "array->elts", otherwise MSVC thinks
+     * that "array->nelts" may be used without having been initialized
+     */
+
+    array->nelts = 0;
+    array->size = size;
+    array->nalloc = n;
+    array->pool = pool;
+
+    array->elts = ngx_palloc(pool, n * size);
+    if (array->elts == NULL) {
+        return NGX_ERROR;
+    }
+
+    return NGX_OK;
+}
 
 ngx_array_t *
 ngx_array_create(ngx_pool_t *p, ngx_uint_t n, size_t size)

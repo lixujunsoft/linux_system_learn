@@ -1,0 +1,64 @@
+#include "ngx_typedef.h"
+#include "ngx_core.h"
+
+
+ngx_int_t
+ngx_thread_cond_create(ngx_thread_cond_t *cond)
+{
+    ngx_err_t  err;
+
+    err = pthread_cond_init(cond, NULL);
+    if (err == 0) {
+        return NGX_OK;
+    }
+
+    printf("pthread_cond_init() failed");
+    return NGX_ERROR;
+}
+
+
+ngx_int_t
+ngx_thread_cond_destroy(ngx_thread_cond_t *cond)
+{
+    ngx_err_t  err;
+
+    err = pthread_cond_destroy(cond);
+    if (err == 0) {
+        return NGX_OK;
+    }
+
+    printf("pthread_cond_destroy() failed");
+    return NGX_ERROR;
+}
+
+
+ngx_int_t
+ngx_thread_cond_signal(ngx_thread_cond_t *cond)
+{
+    ngx_err_t  err;
+
+    err = pthread_cond_signal(cond);
+    if (err == 0) {
+        return NGX_OK;
+    }
+
+    printf("pthread_cond_signal() failed");
+    return NGX_ERROR;
+}
+
+
+ngx_int_t
+ngx_thread_cond_wait(ngx_thread_cond_t *cond, ngx_thread_mutex_t *mtx)
+{
+    ngx_err_t  err;
+
+    err = pthread_cond_wait(cond, mtx);
+
+    if (err == 0) {
+        return NGX_OK;
+    }
+
+    printf("pthread_cond_wait() failed");
+
+    return NGX_ERROR;
+}

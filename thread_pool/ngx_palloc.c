@@ -32,7 +32,6 @@ ngx_create_pool(size_t size)
 
     /* 只有缓存池的父节点，才会用到下面的这些，子结点只挂载在p->d.next，并且只负责p->d的数据内容 */
     p->current = p;
-    p->chain = NULL;
     p->large = NULL;
     p->cleanup = NULL;
 
@@ -94,13 +93,11 @@ ngx_reset_pool(ngx_pool_t *pool)
     }
 
     pool->current = pool;
-    pool->chain = NULL;
     pool->large = NULL;
 }
 
 /* 内存池分配一块内存，返回void类型指针, 考虑内存对齐 */
-void *
-ngx_palloc(ngx_pool_t *pool, size_t size)
+void *ngx_palloc(ngx_pool_t *pool, size_t size)
 {
     printf("==> ngx_palloc\n");
     /* 判断每次分配的内存大小，如果超出了pool->max的限制，则需要走大数据内存分配策略 */
@@ -112,8 +109,7 @@ ngx_palloc(ngx_pool_t *pool, size_t size)
 }
 
 /* 不考虑内存对齐 */
-void *
-ngx_pnalloc(ngx_pool_t *pool, size_t size)
+void *ngx_pnalloc(ngx_pool_t *pool, size_t size)
 {
     if (size <= pool->max) {
         return ngx_palloc_small(pool, size, 0);

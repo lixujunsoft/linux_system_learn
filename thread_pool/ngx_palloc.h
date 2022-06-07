@@ -50,7 +50,6 @@ struct ngx_pool_s {
     ngx_pool_data_t       d;          /* 内存池的数据区域 */
     size_t                max;        /* 最大每次可分配内存 */
     ngx_pool_t           *current;    /* 指向当前的内存池指针地址。ngx_pool_t链表上最后一个缓存池结构 */
-    ngx_chain_t          *chain;      /* 缓冲区链表 */
     ngx_pool_large_t     *large;      /* 存储大数据的链表 */
     ngx_pool_cleanup_t   *cleanup;    /* 可自定义回调函数，清除内存块分配的内存 */
 };

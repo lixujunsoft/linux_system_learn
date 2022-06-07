@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <stdio.h>
 
 #define ngx_memzero(buf, n)       (void) memset(buf, 0, n)
 #define ngx_memzero(buf, n)       (void) memset(buf, 0, n)
@@ -30,6 +32,9 @@
 #define ngx_errno                  errno
 #define NGX_ENOENT                 ENOENT
 #define ngx_inline      inline
+
+#define ngx_string(str)     { sizeof(str) - 1, (u_char *) str }
+#define ngx_strncmp(s1, s2, n)  strncmp((const char *) s1, (const char *) s2, n)
 
 typedef int                      ngx_fd_t;
 typedef unsigned char __u_char;

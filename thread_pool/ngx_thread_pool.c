@@ -8,7 +8,6 @@
     (q)->last = &(q)->first
 
 ngx_thread_mutex_t thread_mutex = PTHREAD_MUTEX_INITIALIZER;
-static void ngx_thread_pool_destroy(ngx_thread_pool_t *tp);
 static void ngx_thread_pool_exit_handler(void *data);
 
 static void *ngx_thread_pool_cycle(void *data);
@@ -71,7 +70,7 @@ ngx_thread_pool_init(ngx_thread_pool_t *tp, ngx_pool_t *pool)
 }
 
 
-static void
+void
 ngx_thread_pool_destroy(ngx_thread_pool_t *tp)
 {
     ngx_uint_t           n;
@@ -174,7 +173,7 @@ ngx_thread_task_post(ngx_thread_pool_t *tp, ngx_thread_task_t *task)
 
     (void) ngx_thread_mutex_unlock(&tp->mtx);
 
-    printf("task #%ld added to thread pool \"%s\"", task->id, tp->name.data);
+    printf("task #%ld added to thread pool \"%s\"\n", task->id, tp->name.data);
 
     return NGX_OK;
 }

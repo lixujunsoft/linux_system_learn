@@ -38,6 +38,7 @@ ngx_int_t ngx_thread_task_post(ngx_thread_pool_t *tp, ngx_thread_task_t *task);
 ngx_thread_pool_t *ngx_thread_pool_add(ngx_pool_t *pool, ngx_array_t *arrayPool,ngx_str_t *name);
 ngx_thread_pool_t *ngx_thread_pool_get(ngx_array_t *arrayPool, ngx_str_t *name);
 ngx_int_t ngx_thread_pool_init(ngx_thread_pool_t *tp, ngx_pool_t *pool);
+void ngx_thread_pool_destroy(ngx_thread_pool_t *tp);
 void ngx_thread_pool_done_queue_init();
 
 #endif /* _NGX_THREAD_POOL_H_INCLUDED_ */

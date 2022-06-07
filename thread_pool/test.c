@@ -20,7 +20,7 @@ int main()
     ngx_array_t *arrayPool = ngx_array_create(memPool, 10, sizeof(ngx_thread_pool_t));
 
     ngx_thread_pool_done_queue_init();
-    ngx_str_t  threadStr = ngx_string("default");
+    ngx_str_t  threadStr = ngx_string("handle data");
     ngx_thread_pool_t *threadPool = ngx_thread_pool_add(memPool, arrayPool, &threadStr);
     threadPool->threads = 10;
     ngx_thread_pool_init(threadPool, memPool);
@@ -34,5 +34,8 @@ int main()
     task->handler = deal_with_task_data;
     ngx_thread_task_post(threadPool, task);
     sleep(10);
+    ngx_thread_pool_destroy(threadPool);
+    sleep(5);
+    ngx_array_destroy(arrayPool);
     ngx_destroy_pool(memPool);
 }

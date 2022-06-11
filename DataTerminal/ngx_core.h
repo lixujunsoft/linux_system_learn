@@ -10,5 +10,7 @@
 #include "ngx_thread.h"
 #include "ngx_string.h"
 #include "msg_queue.h"
+#include "sem_array.h"
+#include "share_mem.h"
 
 #endif

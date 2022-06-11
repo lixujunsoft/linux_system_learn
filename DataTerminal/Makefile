@@ -8,6 +8,8 @@ OBJS += ngx_thread_mutex.c
 OBJS += ngx_thread_pool.c 
 OBJS += test.c
 OBJS += msg_queue.c
+OBJS += share_mem.c
+OBJS += sem_array.c
 
 cc=gcc
 

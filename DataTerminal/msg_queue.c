@@ -8,67 +8,83 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-#include "msg_queue.h"
 #include "ngx_typedef.h"
 #include "ngx_core.h"
 
-#define ARRAY_SIZE      2
-#define UNDEFINED_MSGID -1
-
-int MsgidArray[MsgQueueIndexArray_MAX] = {UNDEFINED_MSGID};
-
-int MsgQueueInit(MsgQueueIndexEnum msgQueueIndex)
+int MsgQueueInit(MsgQueueInfo *msgQueueInfo)
 {
     key_t key;
-    
-    if (UNDEFINED_MSGID != MsgidArray[msgQueueIndex]) {
-        return RET_OK;
+    int msgid;
+
+    if (NULL == msgQueueInfo) {
+        return RET_ERROR;
     }
 
-    key = ftok("/tmp", msgQueueIndex);
-    int msgid = msgget(key, IPC_CREAT | 0777);
+    if ((key = ftok(msgQueueInfo->pathName, msgQueueInfo->projId)) == -1) {
+        perror("ftok");
+        return RET_ERROR;
+    }
+    
+    msgid = msgget(key, msgQueueInfo->msgflg);
     if (RET_ERROR == msgid) {
         return RET_ERROR;
     }
-    MsgidArray[msgQueueIndex] = msgid;
+    msgQueueInfo->msgid = msgid;
 
     return RET_OK;
 }
 
-int MsgSend(MsgQueueMsg *msg, MsgQueueIndexEnum msgQueueIndex)
+int MsgSend(MsgQueueInfo *msgQueueInfo, MsgQueueMsg *msg)
 {
-    if (UNDEFINED_MSGID == MsgidArray[msgQueueIndex]) {
+    if (NULL == msgQueueInfo || NULL == msg) {
+        return RET_ERROR;
+    }
+
+    int error = msgsnd(msgQueueInfo->msgid, msg, sizeof(msg->mtext), 0);
+    if (RET_ERROR == error) {
+        perror("MsgSend");
+        return RET_ERROR;
+    }
+    return RET_OK;
+}
+
+int MsgRecv(MsgQueueInfo *msgQueueInfo, MsgQueueMsg *msg)
+{
+    if (NULL == msgQueueInfo || NULL == msg) {
         return RET_ERROR;
     }
     
-    int error = msgsnd(MsgidArray[msgQueueIndex], msg, sizeof(msg->mtext), 0);
+    int error = msgrcv(msgQueueInfo->msgid, msg, sizeof(msg->mtext), msg->mtype, 0);
     if (RET_ERROR == error) {
+        perror("MsgRecv");
         return RET_ERROR;
     }
     return RET_OK;
 }
 
-int MsgRecv(MsgQueueMsg *msg, MsgQueueIndexEnum msgQueueIndex)
+int MsgQueueDestroy(MsgQueueInfo *msgQueueInfo)
 {
-    if (UNDEFINED_MSGID == MsgidArray[msgQueueIndex]) {
-        return RET_ERROR;
+    if (NULL == msgQueueInfo) {
+        return RET_OK;
     }
-    
-    int error = msgsnd(MsgidArray[msgQueueIndex], msg, sizeof(msg->mtext), 0);
-    if (RET_ERROR == error) {
-        exit(1);
+
+    if (msgctl(msgQueueInfo->msgid, IPC_RMID, NULL) == -1) {
+        return RET_ERROR;
     }
     return RET_OK;
 }
 
-void MsgQueueDestroy()
+MsgQueueInfo *MsgQueueInfoConstruct(char *pathName, int projId, int msgflg)
 {
-    for (int i = 0; i < ARRAY_SIZE; i++) {
-        if (UNDEFINED_MSGID == MsgidArray[i]) {
-            continue;
-        }
-
-        msgctl(MsgidArray[i], IPC_RMID, NULL);
-        MsgidArray[i] = UNDEFINED_MSGID;
+    MsgQueueInfo *msgQueueInfo = (MsgQueueInfo*)malloc(sizeof(MsgQueueInfo));
+    if (NULL == msgQueueInfo) {
+        return NULL;
     }
+
+    memset(msgQueueInfo, 0, sizeof(msgQueueInfo));
+    strncpy(msgQueueInfo->pathName, pathName, sizeof(pathName));
+    msgQueueInfo->projId = projId;
+    msgQueueInfo->msgflg = msgflg;
+
+    return msgQueueInfo;
 }

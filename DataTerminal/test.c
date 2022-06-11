@@ -100,10 +100,54 @@ void SemAndShmTest()
 __ERROR:
 }
 
+void MsgQueueTest()
+{
+    pid_t pid;
+    MsgQueueInfo *msgQueueInfo;
+    MsgQueueMsg msg;
+    msg.mtype = 100;
 
+    msgQueueInfo = MsgQueueInfoConstruct("/tmp", 'a', IPC_CREAT | 0666);
+    MsgQueueInit(msgQueueInfo);
+
+    pid = fork();
+    if (pid < 0) {
+        perror("fork");
+        return;
+    } else if (pid == 0) {
+        int i = 0;
+        while (1) {
+            memset(&msg, 0, sizeof(MsgQueueMsg));
+            msg.mtype = 100;
+            if (i == 10) {
+                sprintf(msg.mtext, "quit");
+                MsgSend(msgQueueInfo, &msg);
+                break;
+            }
+
+            sprintf(msg.mtext, "msg %d", i);
+            MsgSend(msgQueueInfo, &msg);
+            i++;
+            sleep(1);
+        }
+    } else {
+        while (1) {
+            memset(&msg, 0, sizeof(MsgQueueMsg));
+            msg.mtype = 100;
+            MsgRecv(msgQueueInfo, &msg);
+            printf("REVC:%s\n", msg.mtext);
+            if (!strcmp("quit", msg.mtext)) {
+                printf("program done\n");
+                MsgQueueDestroy(msgQueueInfo);
+                break;
+            }
+        }
+    }
+}
 
 int main()
 {
     // ThreadpoolTest();
-    SemAndShmTest();
+    // SemAndShmTest();
+    MsgQueueTest();
 }

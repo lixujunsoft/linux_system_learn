@@ -10,15 +10,18 @@ typedef struct
     char mtext[1024];
 } MsgQueueMsg;
 
-typedef enum {
-    DEBUG_LOG_MSG,
-    COMMUNICATION_msg,
-    MsgQueueIndexArray_MAX
-} MsgQueueIndexEnum;
+typedef struct {
+    char pathName[128];
+    int projId;
+    int msgflg;
 
-int MsgQueueInit(MsgQueueIndexEnum msgQueueIndex);
-int MsgSend(MsgQueueMsg *msg, MsgQueueIndexEnum msgQueueIndex);
-int MsgRecv(MsgQueueMsg *msg, MsgQueueIndexEnum msgQueueIndex);
-void MsgQueueDestroy();
+    int msgid;
+} MsgQueueInfo;
+
+MsgQueueInfo *MsgQueueInfoConstruct(char *pathName, int projId, int msgflg);
+int MsgQueueInit(MsgQueueInfo *msgQueueInfo);
+int MsgSend(MsgQueueInfo *msgQueueInfo, MsgQueueMsg *msg);
+int MsgRecv(MsgQueueInfo *msgQueueInfo, MsgQueueMsg *msg);
+int MsgQueueDestroy(MsgQueueInfo *msgQueueInfo);
 
 #endif

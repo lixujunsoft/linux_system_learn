@@ -9,5 +9,6 @@
 #include "ngx_array.h"
 #include "ngx_thread.h"
 #include "ngx_string.h"
+#include "msg_queue.h"
 
 #endif

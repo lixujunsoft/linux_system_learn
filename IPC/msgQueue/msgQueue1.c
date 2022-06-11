@@ -14,6 +14,7 @@
 struct msgbuf
 {
     long mtype;
+    char id;
     char mtext[100];
 };
 
@@ -39,7 +40,7 @@ int main()
     } else if (0 == pid) {
         while (1) {    // 发消息
             memset(&buf, 0, sizeof(buf));
-            scanf("%s", buf.mtext);
+            scanf("%s，%d", buf.mtext, &buf.id);
             buf.mtype = 5;
 
             ret = msgsnd(msgid, &buf, sizeof(buf.mtext), 0);

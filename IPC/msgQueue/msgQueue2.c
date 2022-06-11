@@ -14,6 +14,7 @@
 struct msgbuf
 {
     long mtype;
+    int id;
     char mtext[100];
 };
 
@@ -70,7 +71,7 @@ int main()
                 printf("Receive:%s\n", buf.mtext);
                 break;
             }
-            printf("Receive:%s\n", buf.mtext);
+            printf("Receive:%s, %d\n", buf.mtext, buf.id);
         }
         waitpid(pid, NULL, 0);
     }

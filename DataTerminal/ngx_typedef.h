@@ -26,6 +26,14 @@
 #define  NGX_DECLINED   -5
 #define  NGX_ABORT      -6
 
+#define  RET_OK          0
+#define  RET_ERROR      -1
+#define  RET_AGAIN      -2
+#define  RET_BUSY       -3
+#define  RET_DONE       -4
+#define  RET_DECLINED   -5
+#define  RET_ABORT      -6
+
 #define NGX_INVALID_FILE         -1
 #define NGX_FILE_ERROR           -1
 

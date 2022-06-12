@@ -173,11 +173,35 @@ void LogTest()
     LogDestroy();
 }
 
+void LogTestMultipleProcess()
+{
+    int pid;
+    LogInit("/home/lixujun/linux_system_learn/log.txt");
+
+    pid = fork();
+    if (pid < 0) {
+        AddDebugLog("pid < 0, line 183");
+        return;
+    } else if (pid == 0) {
+        while (1) {
+            AddDebugLog("pid = 0, line 187");
+            sleep(1);
+        }
+    } else {
+        int i = 0;
+        while (1) {
+            sleep(2);
+            AddDebugLog("pid = 0, line 194");
+        }
+    }
+}
+
 int main()
 {
     // ThreadpoolTest();
     // SemAndShmTest();
     // MsgQueueTest();
     // FileTest();
-    LogTest();
+    // LogTest();
+    LogTestMultipleProcess();
 }

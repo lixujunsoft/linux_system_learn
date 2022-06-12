@@ -10,8 +10,11 @@ OBJS += test.c
 OBJS += msg_queue.c
 OBJS += share_mem.c
 OBJS += sem_array.c
+OBJS += file.c
+OBJS += log.c
+OBJS += unix_thread.c
 
 cc=gcc
 
 $(OBJ):$(OBJS)
-	$(CC) $^ -o $@ -g
+	$(CC) $^ -o $@ -g -lpthread

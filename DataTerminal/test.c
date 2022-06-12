@@ -145,9 +145,39 @@ void MsgQueueTest()
     }
 }
 
+void FileTest()
+{
+    int fd = OpenFile("/home/lixujun/linux_system_learn/test.txt");
+    if (RET_ERROR == fd) {
+        perror("OpenFile failed");
+        return;
+    }
+    char tmpStr[100] = {"hello world, how are you\n"};
+    WriteFile(fd, tmpStr, strlen(tmpStr));
+    WriteFile(fd, tmpStr, strlen(tmpStr));
+    CloseFile(fd);
+}
+
+void LogTest()
+{
+    LogInit("/home/lixujun/linux_system_learn/log.txt");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+    AddDebugLog("hello");
+
+    LogDestroy();
+}
+
 int main()
 {
     // ThreadpoolTest();
     // SemAndShmTest();
-    MsgQueueTest();
+    // MsgQueueTest();
+    // FileTest();
+    LogTest();
 }

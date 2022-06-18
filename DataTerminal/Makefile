@@ -13,6 +13,7 @@ OBJS += sem_array.c
 OBJS += file.c
 OBJS += log.c
 OBJS += unix_thread.c
+OBJS += unix_process.c
 
 cc=gcc
 

@@ -15,5 +15,6 @@
 #include "file.h"
 #include "unix_thread.h"
 #include "log.h"
+#include "unix_process.h"
 
 #endif

@@ -196,6 +196,11 @@ void LogTestMultipleProcess()
     }
 }
 
+void ProcessTest()
+{
+    ngx_master_process_cycle(5);
+}
+
 int main()
 {
     // ThreadpoolTest();
@@ -203,5 +208,7 @@ int main()
     // MsgQueueTest();
     // FileTest();
     // LogTest();
-    LogTestMultipleProcess();
+    // LogTestMultipleProcess();
+
+    ProcessTest();
 }

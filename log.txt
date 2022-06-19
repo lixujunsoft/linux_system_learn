@@ -1,8 +1,0 @@
-log thhello
-hello
-hello
-hello
-hello
-hello
-hello
-log thread done

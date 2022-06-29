@@ -3,6 +3,8 @@
 
 #include <sys/socket.h>
 
+typedef void (*Sigfunc)(int);
+
 void perr_exit(const char *s);
 int Accept(int fd, struct sockaddr *sa, socklen_t *salenptr);
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen);
@@ -14,5 +16,6 @@ ssize_t Write(int fd, const void *ptr, size_t nbytes);
 void Close(int fd);
 ssize_t Readn(int fd, void *vptr, size_t n);
 ssize_t Writen(int fd, const void *vptr, size_t n);
+Sigfunc signal(int signo, Sigfunc func);
 
 #endif

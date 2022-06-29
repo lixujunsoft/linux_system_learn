@@ -5,6 +5,7 @@
         "string.h": "c",
         "ngx_alloc.h": "c",
         "ngx_core.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "signal.h": "c"
     }
 }

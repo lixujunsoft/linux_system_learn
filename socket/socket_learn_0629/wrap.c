@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "wrap.h"
+#include <signal.h>
 
 void perr_exit(const char *s)
 {
@@ -134,4 +135,26 @@ ssize_t Writen(int fd, const void *vptr, size_t n)
         ptr += nwritten;
     }
     return n;
+}
+
+Sigfunc signal(int signo, Sigfunc func)
+{
+    struct sigaction act, oact;
+    act.sa_handler = func;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+    if (signo == SIGALRM) {
+#ifdef SA_INTERRUPT
+    act.sa_flags |= SA_INTERRUPT;
+#endif
+    } else {
+#ifdef SA_RESTART
+    act.sa_flags |= SA_RESTART;
+#endif
+    }
+
+    if (sigaction(signo, &act, &oact) < 0) {
+        return(SIG_ERR);
+    }
+    return oact.sa_handler;
 }

@@ -7,34 +7,24 @@
 #include <arpa/inet.h>
 #include "wrap.h"
 #include <errno.h>
+#include <signal.h>
 
 #define SERV_PORT 8000
 #define MAXLINE 128
 
-void str_echo(int connfd)
-{
-    ssize_t n;
-    char buf[MAXLINE];
-
-again:
-    while ((n = read(connfd, buf, MAXLINE)) > 0) {
-        Writen(connfd, buf, n);
-    }
-
-    if (n < 0 && errno == EINTR) {
-        goto again;
-    } else if (n < 0) {
-        perr_exit("str_eoch: read error");
-    }
-}
-
+/*
+1.当fork子进程时，必须捕获SIGCHLD信号
+2.当捕获信号时，必须处理被中断的系统调用
+3.SIGCHLD的信号处理函数必须正确编写，应使用waitpid函数以免留下僵尸进程
+*/
 int main(int argc, char *argv[])
 {
     int listenfd, connfd;
     pid_t childpid;
     socklen_t clilen;
     struct sockaddr_in cliaddr, servaddr;
-
+    Signal(SIGCHLD, sig_chld);
+    
     listenfd = Socket(AF_INET, SOCK_STREAM, 0);
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
@@ -46,7 +36,14 @@ int main(int argc, char *argv[])
 
     for (;;) {
         clilen = sizeof(cliaddr);
-        connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &clilen);
+        if ((connfd = accept(listenfd, (struct sockaddr*)&cliaddr, &clilen)) < 0) {
+            if (errno == EINTR) {
+                continue;
+            } else {
+                perr_exit("accept error");
+            }
+        }
+
         if ((childpid = fork()) == 0) {
             Close(listenfd);
             str_echo(connfd);

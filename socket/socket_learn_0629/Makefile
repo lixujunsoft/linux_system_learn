@@ -1,4 +1,4 @@
-all: server client
+all: server client test
 OBJ_server=server
 
 OBJS_server += server.c
@@ -13,7 +13,12 @@ OBJ_client=client
 OBJS_client += client.c
 OBJS_client += wrap.c
 
-cc=gcc
-
 $(OBJ_client):$(OBJS_client)
+	$(CC) $^ -o $@ -g
+
+OBJ_test = test
+OBJS_test += wrap.c
+OBJS_test += test.c
+
+$(OBJ_test):$(OBJS_test)
 	$(CC) $^ -o $@ -g

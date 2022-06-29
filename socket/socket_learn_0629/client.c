@@ -8,21 +8,6 @@
 #include "wrap.h"
 #include <errno.h>
 
-#define SERV_PORT 8000
-#define MAXLINE 128
-
-void str_cli(FILE *fp, int sockfd)
-{
-    char sendline[MAXLINE], recvline[MAXLINE];
-    while (fgets(sendline, MAXLINE, fp) != NULL) {
-        Writen(sockfd, sendline, strlen(sendline));
-        if (Read(sockfd, recvline, MAXLINE) == 0) {
-            perr_exit("str_cli: server terminated prematurely");
-        }
-        fputs(recvline, stdout);
-    }
-}
-
 int main(int argc, char *argv[])
 {
     int sockfd;

@@ -78,16 +78,16 @@ int main(int argc, char *argv[])
             if (FD_ISSET(sockfd, &rset)) {
                 if ((n = Read(sockfd, buf, MAXLINE)) == 0) {
                     // connection closed by client (read EOF)
+                    Close(sockfd);
+                    FD_CLR(sockfd, &allset);
+                    client[i] = -1;
+                } else {
+                    Writen(sockfd, buf, n);
                 }
-                Close(sockfd);
-                FD_CLR(sockfd, &allset);
-                client[i] = -1;
-            } else {
-                Writen(sockfd, buf, n);
-            }
 
-            if (--nready <= 0) {
-                break;            // no more readable descriptors
+                if (--nready <= 0) {
+                    break;            // no more readable descriptors
+                }
             }
         }
     }

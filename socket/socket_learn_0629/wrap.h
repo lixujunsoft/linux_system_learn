@@ -5,6 +5,8 @@
 #define SERV_PORT 8000
 #define MAXLINE 128
 #define LISTENQ 128
+#define OPEN_MAX 1024
+#define INFTIM -1
 
 typedef void (*Sigfunc)(int);
 

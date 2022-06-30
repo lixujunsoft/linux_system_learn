@@ -220,6 +220,7 @@ void str_cli_select(FILE *fp, int sockfd)
         select(maxfdp1, &rset, NULL, NULL, NULL);
 
         if (FD_ISSET(sockfd, &rset)) {
+            bzero(recvline, sizeof(sendline));   // 注：读数据之前清空
             if (Read(sockfd, recvline, MAXLINE) == 0) {
                 perr_exit("str_cli: server terminated prematurely");
             }
@@ -227,6 +228,7 @@ void str_cli_select(FILE *fp, int sockfd)
         }
 
         if (FD_ISSET(fileno(fp), &rset)) {
+            bzero(sendline, sizeof(sendline));
             if (fgets(sendline, MAXLINE, fp) == NULL) {
                 return;
             }

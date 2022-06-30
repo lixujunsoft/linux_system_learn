@@ -22,6 +22,6 @@ int main(int argc, char *argv[])
     servaddr.sin_port = htons(SERV_PORT);
     inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
     Connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
-    str_cli(stdin, sockfd);
+    str_cli_select(stdin, sockfd);
     exit(0);
 }

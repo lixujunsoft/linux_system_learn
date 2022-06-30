@@ -1,4 +1,4 @@
-all: server client test
+all: server client test server_select
 OBJ_server=server
 
 OBJS_server += server.c
@@ -21,4 +21,15 @@ OBJS_test += wrap.c
 OBJS_test += test.c
 
 $(OBJ_test):$(OBJS_test)
+	$(CC) $^ -o $@ -g
+
+
+OBJ_server_select = server_select
+
+OBJS_server_select += server_select.c
+OBJS_server_select += wrap.c
+
+cc=gcc
+
+$(OBJ_server_select):$(OBJS_server_select)
 	$(CC) $^ -o $@ -g

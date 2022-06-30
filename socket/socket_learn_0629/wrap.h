@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #define SERV_PORT 8000
 #define MAXLINE 128
+#define LISTENQ 128
 
 typedef void (*Sigfunc)(int);
 
@@ -23,4 +24,6 @@ Sigfunc Signal(int signo, Sigfunc func);
 void sig_chld(int signo);
 void str_echo(int connfd);
 void str_cli(FILE *fp, int sockfd);
+void str_cli_select(FILE *fp, int sockfd);
+void str_cli_shutdowm(FILE *fp, int sockfd);
 #endif

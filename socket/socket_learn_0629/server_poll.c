@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
                 continue;
             }
 
-            if (client[i].revents & (POLLRDNORM | POLLERR)) {
+            if (client[i].revents & (POLLRDNORM | POLLERR)) { // 检查POLLERR的原因在于：有些实现在一个连接上接收到RST时返回的是POLLERR事件，而其他实现返回的只是POLLRDNORM事件
                 if ((n = read(sockfd, buf, MAXLINE)) < 0) {
                     if (errno == ECONNRESET) {
                         // connection reset by client

@@ -104,6 +104,6 @@ int main(int argc, char *argv[])
 
     sockfd = Socket(AF_INET, SOCK_DGRAM, 0);
     //dg_cli(stdin, sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
-    dg_cli_test(stdin, sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
+    dg_cli_revise(stdin, sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
     exit(0);
 }

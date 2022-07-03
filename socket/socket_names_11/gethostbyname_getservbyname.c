@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
     if ((sp = getservbyname(argv[2], "tcp")) == NULL) {
         printf("getservbyname error for %s\n", argv[2]);
     }
+    printf("server port: %d\n", sp->s_port);
 
     for (; *pptr != NULL; pptr++) {
         sockfd = Socket(AF_INET, SOCK_STREAM, 0);

@@ -95,7 +95,7 @@ int tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
     } while ((res = res->ai_next) != NULL);
 
     if (res == NULL) {
-        printf("tcp_listen error for %s, %s", host, serv);
+        printf("tcp_listen error for %s, %s\n", host, serv);
         return -1;
     }
 

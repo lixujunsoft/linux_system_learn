@@ -32,4 +32,5 @@ void str_cli(FILE *fp, int sockfd);
 void str_cli_select(FILE *fp, int sockfd);
 void str_cli_shutdowm(FILE *fp, int sockfd);
 const char *Sock_ntop(struct sockaddr* addr, socklen_t len);
+int Sock_port(struct sockaddr* addr, socklen_t len);
 #endif

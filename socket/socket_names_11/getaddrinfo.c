@@ -1,5 +1,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+#include <string.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -62,6 +64,7 @@ int tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
     int listenfd, n;
     const int on = 1;
     struct addrinfo hints, *res, *ressave;
+    char buf[MAXLINE];
 
     bzero(&hints, sizeof(struct addrinfo));
     hints.ai_flags = AI_PASSIVE;
@@ -82,9 +85,12 @@ int tcp_listen(const char *host, const char *serv, socklen_t *addrlenp)
         }
 
         setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-        if (bind(listenfd, res->ai_addr, res->ai_addrlen)) {
+        printf("serveraddr %s\n", Sock_ntop(res->ai_addr, res->ai_addrlen));
+        printf("port: %d\n", Sock_port(res->ai_addr, res->ai_addrlen));
+        if (bind(listenfd, res->ai_addr, res->ai_addrlen) == 0) {
             break;
         }
+        perror("Bind");
         close(listenfd);
     } while ((res = res->ai_next) != NULL);
 

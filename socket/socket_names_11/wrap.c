@@ -291,3 +291,16 @@ const char *Sock_ntop(struct sockaddr* addr, socklen_t len)
 
     return NULL;
 }
+
+int Sock_port(struct sockaddr* addr, socklen_t len)
+{
+    if (sizeof(struct sockaddr_in) == len) {
+        struct sockaddr_in *addrTmp = (struct sockaddr_in*)addr; 
+        return ntohs(addrTmp->sin_port);
+    } else if (sizeof(struct sockaddr_in6) == len) {
+        struct sockaddr_in6 *addrTmp = (struct sockaddr_in6*)addr;
+        return ntohs(addrTmp->sin6_port);
+    }
+
+    return -1;
+}

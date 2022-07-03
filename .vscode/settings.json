@@ -9,6 +9,7 @@
         "signal.h": "c",
         "in.h": "c",
         "socket.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "wrap.h": "c"
     }
 }

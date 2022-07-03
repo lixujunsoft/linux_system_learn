@@ -278,7 +278,7 @@ void str_cli_shutdowm(FILE *fp, int sockfd)
     }
 }
 
-const char *Sock_ntop(struct sockaddr* addr, socklen_t len)
+const char *Sock_ntop(struct sockaddr *addr, socklen_t len)
 {
     char buf[INET6_ADDRSTRLEN];
     if (sizeof(struct sockaddr_in) == len) {
@@ -292,7 +292,7 @@ const char *Sock_ntop(struct sockaddr* addr, socklen_t len)
     return NULL;
 }
 
-int Sock_port(struct sockaddr* addr, socklen_t len)
+int Sock_port(struct sockaddr *addr, socklen_t len)
 {
     if (sizeof(struct sockaddr_in) == len) {
         struct sockaddr_in *addrTmp = (struct sockaddr_in*)addr; 

@@ -1,0 +1,4 @@
+1.输出进程的状态、进程ID、父进程ID、进程组ID、会话ID、cmd
+ps -A -o stat,pid,ppid,pgid,sid,cmd
+2.查找僵尸进程
+ps -A -o stat,pid,ppid,pgid,sid,cmd | grep -e '^[Zz]'

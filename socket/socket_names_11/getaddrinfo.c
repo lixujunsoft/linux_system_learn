@@ -224,4 +224,3 @@ int udp_server(const char *host, char *serv, socklen_t *addrlenp)
     freeaddrinfo(ressave);
     return sockfd;
 }
-

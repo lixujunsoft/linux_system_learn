@@ -10,6 +10,7 @@
         "in.h": "c",
         "socket.h": "c",
         "stdio.h": "c",
-        "wrap.h": "c"
+        "wrap.h": "c",
+        "error.h": "c"
     }
 }

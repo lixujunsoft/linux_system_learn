@@ -10,11 +10,12 @@
 #include <string.h>
 #include "getaddrinfo.h"
 #include "wrap.h"
+#include "err.h"
 
 #define MAXFD 64
 #define MAXLINE 128
 
-int daemon_proc;
+extern int daemon_proc;
 
 int daemon_init(const char *pname, int facility)
 {
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
         printf("usage: daytimetcpsrv2 [<host>] <service or port>");
     }
 
-    // daemon_init(argv[0], 0);
+    daemon_init(argv[0], 0);
 
     if (argc == 2) {
         listenfd = tcp_listen(NULL, argv[1], &addrlen);
@@ -82,11 +83,12 @@ int main(int argc, char *argv[])
     for (;;) {
         len = addrlen;
         connfd = Accept(listenfd, cliaddr, &len);
-        printf("connection from %s", Sock_ntop(cliaddr, len));
+        
+        err_msg("connection from %s", Sock_ntop(cliaddr, len));
 
         ticks = time(NULL);
         snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
-        write(connfd, buff, strlen(buff));
+        Write(connfd, buff, strlen(buff));
         close(connfd);
     }
 }

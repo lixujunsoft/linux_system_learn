@@ -12,6 +12,31 @@
 #define SERV_PORT 9000
 #define OPEN_MAX 1024
 
+/*
+int poll(struct pollfd *fdarray, unsigned long nfds, int timeout);
+
+fdarray：指向一个结构数组第一个元素的指针。每个数组元素都是一个pollfd结构，用于指定测试某个给定描述符fd的条件
+         struct pollfd {
+            int fd;           // 需要检查的文件描述符
+            short events;     // 要测试的条件
+            short revents;    // 返回该描述符的状态
+         };
+         每个描述符都有两个变量，一个为调用值，另一个为返回结果，从而避免使用值-结果参数
+         poll识别三类数据：普通、优先级带和高优先级
+nfds：结构数组中元素的个数（需要监控的元素的个数，注意不是结构数组的大小）
+timeout：指定poll函数返回前等待多长时间。它是一个指定应等待毫秒数的正值
+         -1 永远等待
+         0  立即返回，不阻塞进程
+         >0 等待指定数目的毫秒数
+         如果系统不能提供毫秒级精度的定时器，该值就向上舍入到最接近的支持值
+
+返回值：
+    当发生错误时，poll函数的返回值为-1，若定时器到时之前没有任何描述符就绪，则返回0,否则返回就绪描述符的个数，即revents成员值非0的描述符个数
+
+如果我们不再关心某个特定描述符，那么可以把与它对应的pollfd结构的fd成员设置成一个负值。poll函数将忽略这样的pollfd结构的events成员，
+返回时将它的revents成员的值置为0
+*/
+
 int main(int argc, char *argv[])
 {
     int i, j, maxi, listenfd, connfd, sockfd;
@@ -32,11 +57,7 @@ int main(int argc, char *argv[])
     Listen(listenfd, 20);
 
     client[0].fd = listenfd;
-    client[0].events = POLLRDNORM;   /* listenfd监听普通事件 */
-
-    for (i = 1; i < OPEN_MAX; i++) {
-        client[i].fd = -1;           /* 用-1初始化client[]里面剩下的元素 */
-    }
+    client[0].events = POLLRDNORM;   /* listenfd监听普通事件（普通数据可读） */
     maxi = 0;
 
     for (;;) {
@@ -71,11 +92,13 @@ int main(int argc, char *argv[])
             if ((sockfd = client[i].fd) < 0) {
                 continue;
             }
+            // POLLRDNORM 普通数据可读
+            // POLLERR    发生错误
             if (client[i].revents & (POLLRDNORM | POLLERR)) {
                 if ((n = Read(sockfd, buf, MAXLINE)) < 0) {
                     if (errno == ECONNRESET) { /* 当收到RST标志时 */
                         /* connection reset by client */
-                        printf("client[%d] aborted connection\n", i);
+                        printf("client[%d]: connection reset by client\n", i);
                         Close(sockfd);
                         client[i].fd = -1;
                     } else {
@@ -83,7 +106,7 @@ int main(int argc, char *argv[])
                     }
                 } else if (n == 0) {
                     /* conection closed by client */
-                    printf("client[%d] closed connection\n", i);
+                    printf("client[%d]: connection closed by client\n", i);
                     Close(sockfd);
                     client[i].fd = -1;
                 } else {

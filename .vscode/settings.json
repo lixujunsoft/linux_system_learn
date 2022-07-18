@@ -11,6 +11,7 @@
         "socket.h": "c",
         "stdio.h": "c",
         "wrap.h": "c",
-        "error.h": "c"
+        "error.h": "c",
+        "iostream": "cpp"
     }
 }

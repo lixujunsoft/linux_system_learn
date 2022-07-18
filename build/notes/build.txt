@@ -1,0 +1,8 @@
+1.预处理
+  g++ -E test.cpp > test.ii
+2.编译
+  g++ -S test.ii
+3.汇编
+  g++ -c test.s
+4.链接
+  g++ test.o -o test

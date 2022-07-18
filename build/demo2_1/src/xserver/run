@@ -1,0 +1,3 @@
+LD_LIBRARY_PATH=../xthread
+export LD_LIBRARY_PATH
+./xserver

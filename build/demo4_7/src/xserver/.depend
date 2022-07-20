@@ -1,0 +1,1 @@
+xserver.o: xserver.cpp ../xthread/xthread.h ../xcom/xcom.h

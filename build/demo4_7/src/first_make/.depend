@@ -1,0 +1,2 @@
+first_make.o: first_make.cpp xdata.h ../test_gcc/test.h
+xdata.o: xdata.cpp xdata.h

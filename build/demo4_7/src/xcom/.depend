@@ -1,0 +1,1 @@
+xcom.o: xcom.cpp xcom.h

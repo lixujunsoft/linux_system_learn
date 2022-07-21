@@ -16,7 +16,7 @@ $(TARGET):$(OBJS)
 install:$(TARGET)
 	$(call Install,$(TARGET),$(OUT)/bin/)
 #	@echo "begin install "$(TARGET)
-#	mkdir -p $(OUT)/bin/
+#	mkdir -p $(OUT)/bin/ #创建多层目录
 #	cp $(TARGET) $(OUT)/bin/
 #	@echo $(TARGET) " install success!"
 

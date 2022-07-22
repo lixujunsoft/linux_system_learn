@@ -6,3 +6,6 @@
   g++ -c test.s
 4.链接
   g++ test.o -o test
+
+g++ -MM first_make.cpp -I../test_gcc
+输出first_make.cpp所有依赖的头文件

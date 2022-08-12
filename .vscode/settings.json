@@ -16,6 +16,7 @@
         "iosfwd": "cpp",
         "ostream": "cpp",
         "list": "cpp",
-        "memory_resource": "cpp"
+        "memory_resource": "cpp",
+        "queue": "cpp"
     }
 }

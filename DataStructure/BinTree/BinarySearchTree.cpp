@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -118,6 +119,10 @@ public:
         cout << endl;
     }
 
+    void LevelOrder() {
+        LevelOrderTraversal(root);
+    }
+
 private:
     void PreOrderTraversal(Node<T> *bstRoot) {
         if (bstRoot != nullptr) {
@@ -129,19 +134,43 @@ private:
 
     void InOrderTraversal(Node<T> *bstRoot)
     {
-        if (bstRoot) {
-            PreOrderTraversal(bstRoot->left);
+        if (bstRoot != nullptr) {
+            InOrderTraversal(bstRoot->left);
             cout << bstRoot->element << " ";
-            PreOrderTraversal(bstRoot->right);
+            InOrderTraversal(bstRoot->right);
         }
     }
 
     void PostOrderTraversal(Node<T> *bstRoot)
     {
-        if (bstRoot) {
-            PreOrderTraversal(bstRoot->left);
-            PreOrderTraversal(bstRoot->right);
+        if (bstRoot != nullptr) {
+            PostOrderTraversal(bstRoot->left);
+            PostOrderTraversal(bstRoot->right);
             cout << bstRoot->element << " ";
+        }
+    }
+
+    /* 实现思路
+       1.将根节点入队
+       2.循环执行以下操作，直到队列为空
+         将队头节点A出队，进行访问
+         将A的左子节点入队
+         将A的右子节点入队
+     */
+    
+    void LevelOrderTraversal(Node<T> *bstRoot) {
+        queue<Node<T>*> tmpQueue;
+        tmpQueue.push(bstRoot);
+        while (!tmpQueue.empty()){
+            Node<T>* tmp = tmpQueue.front();
+            cout << tmp->element << " ";
+            tmpQueue.pop();
+            if (tmp->left != nullptr) {
+                tmpQueue.push(tmp->left);
+            }
+            if (tmp->right != nullptr) {
+                tmpQueue.push(tmp->right);
+            }
         }
     }
 
@@ -167,9 +196,7 @@ public:
 };
 
 ostream& operator<<(ostream& out, const Person &person) {
-        out << "*****************" << endl;
-        out << person.age << endl;
-        out << person.name << endl;
+        out << "age:" << person.age << "__name:" << person.name;
         return out;
 }
 
@@ -185,7 +212,7 @@ class PersonComparator : public Comparator<Person> {
 
 void test1()
 {
-    int array[] = {7, 4, 9, 2, 5, 8, 11, 3}; 
+    int array[] = {7, 4, 9, 2, 1, 3, 5, 8, 11, 10, 12}; 
     BinarySearchTree<int> *bst = new BinarySearchTree<int>();
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
         bst->add(array[i]);
@@ -196,6 +223,9 @@ void test1()
     bst->InOrder();
     cout << "PostOrder" << endl;
     bst->PostOrder();
+    cout << "LevelOrder" << endl;
+    bst->LevelOrder();
+    
 }
 
 void test2()
@@ -210,11 +240,12 @@ void test2()
     bst->add(Person(11, "student_7"));
     bst->add(Person(3, "student_8"));
     bst->InOrder();
+    bst->LevelOrder();
 }
 
 /* 进行比较的元素要重载 - 运算符 */
 int main()
 {
-    // test1();
-    test2();
+    test1();
+    // test2();
 }

@@ -73,6 +73,7 @@ public:
             } else if (cmp < 0) {
                 node = node->left;
             } else {
+                node->element = element;
                 return;
             }
         }
@@ -153,6 +154,7 @@ private:
 /* 示例 自定义比较器 ******************************************/
 class Person {
 public:
+    Person() {}
     Person(int age, string name) {
         this->age = age;
         this->name = name;
@@ -199,13 +201,20 @@ void test1()
 void test2()
 {
     BinarySearchTree<Person> *bst = new BinarySearchTree<Person>();
-    bst->add(Person(28, "lixujun"));
-    bst->add(Person(27, "xubaoni"));
+    bst->add(Person(7, "student_1"));
+    bst->add(Person(4, "student_2"));
+    bst->add(Person(9, "student_3"));
+    bst->add(Person(2, "student_4"));
+    bst->add(Person(5, "student_5"));
+    bst->add(Person(8, "student_6"));
+    bst->add(Person(11, "student_7"));
+    bst->add(Person(3, "student_8"));
+    bst->InOrder();
 }
 
 /* 进行比较的元素要重载 - 运算符 */
 int main()
 {
-    test1();
+    // test1();
     test2();
 }

@@ -204,6 +204,11 @@ public:
         return 1 + max(height(bstRoot->left), height(bstRoot->right));
     }*/
 
+    Node<T> *Invert() {
+        // return InvertTree_PreOrder(root);
+        return InvertTree_InOrder(root);
+        // return InvertTree_LevelOrder(root);
+    }
 
     void* getRoot() const {
         return (void*)root;
@@ -308,6 +313,63 @@ private:
         }
     }
 
+    // 翻转树 前序遍历实现
+    Node<T> *InvertTree_PreOrder(Node<T> *bstRoot) {
+        if (bstRoot == nullptr) {
+            return nullptr;
+        }
+
+        Node<T> *tmp = bstRoot->left;
+        bstRoot->left = bstRoot->right;
+        bstRoot->right = tmp;
+
+        InvertTree_PreOrder(bstRoot->left);
+        InvertTree_PreOrder(bstRoot->right);
+        return bstRoot;
+    }
+
+    // 翻转树 中序遍历实现
+    Node<T> *InvertTree_InOrder(Node<T> *bstRoot) {
+        if (bstRoot == nullptr) {
+            return nullptr;
+        }
+
+        InvertTree_InOrder(bstRoot->left);
+
+        Node<T> *tmp = bstRoot->left;
+        bstRoot->left = bstRoot->right;
+        bstRoot->right = tmp;
+
+        InvertTree_InOrder(bstRoot->left);
+        return bstRoot;
+    }
+
+    // 翻转树 层序遍历实现
+    Node<T> *InvertTree_LevelOrder(Node<T> *bstRoot) {
+        if (bstRoot == nullptr) {
+            return nullptr;
+        }
+
+        queue<Node<T>*> tmpQueue;
+        tmpQueue.push(bstRoot);
+        while (!tmpQueue.empty()){
+            Node<T>* tmp = tmpQueue.front();
+
+            Node<T> *tmpSwap = tmp->left;
+            tmp->left = tmp->right;
+            tmp->right = tmpSwap;
+
+            tmpQueue.pop();
+            if (tmp->left != nullptr) {
+                tmpQueue.push(tmp->left);
+            }
+            if (tmp->right != nullptr) {
+                tmpQueue.push(tmp->right);
+            }
+        }
+        return bstRoot;
+    }
+
     int treeSize;
     Node<T> *root;
     Comparator<T> *comparator;
@@ -360,7 +422,8 @@ void test1()
     bst->LevelOrder();
     cout << bst->height() << endl;
     cout << bst->isComplete() << endl;
-
+    cout << *bst;
+    bst->Invert();
     cout << *bst;
 }
 
@@ -384,6 +447,6 @@ void test2()
 /* 进行比较的元素要重载 - 运算符 */
 int main()
 {
-    // test1();
-    test2();
+    test1();
+    // test2();
 }

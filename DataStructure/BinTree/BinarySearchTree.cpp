@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <cmath>
+#include "./Printer.h"
 
 using namespace std;
 
@@ -20,6 +22,14 @@ public:
         this->right = nullptr;
     }
 
+    bool isLeaf() {
+        return left == nullptr && right == nullptr;
+    }
+
+    bool hasTwoChildren() {
+        return left != nullptr && right != nullptr;
+    }
+
     T element;
     Node *left;
     Node *right;
@@ -27,7 +37,7 @@ public:
 };
 
 template <class T>
-class BinarySearchTree
+class BinarySearchTree : public Printer
 {
 public:
     BinarySearchTree() {
@@ -89,14 +99,6 @@ public:
         treeSize++;
     }
 
-    int compare(T e1, T e2) {
-        if (comparator != nullptr) {
-            return comparator->compare(e1, e2);
-        }
-
-        return e1 - e2;
-    }
-
     void remove(T element);
 
     bool contains(T element) {
@@ -123,7 +125,128 @@ public:
         LevelOrderTraversal(root);
     }
 
+    int height()
+    {
+        return height(root);
+    }
+
+    bool isComplete() {
+        if (root == nullptr) {
+            return false;
+        }
+
+        bool leaf = false;
+        queue<Node<T>*> tmpQueue;
+        tmpQueue.push(root);
+        while (!tmpQueue.empty()){
+            Node<T>* tmp = tmpQueue.front();
+            tmpQueue.pop();
+
+            if (leaf && !tmp->isLeaf()) {
+                return false;
+            }
+            if (tmp->hasTwoChildren()) {
+                tmpQueue.push(tmp->left);
+                tmpQueue.push(tmp->right);
+            } else if (tmp->left == nullptr && tmp->left != nullptr) {
+                return false;
+            } else { // 后面遍历的节点都必须是叶子节点
+                leaf = true;
+            }
+        }
+
+        return true;
+    }
+
+    /* 使用层序遍历实现计算树的高度 */
+    int height(Node<T> *bstRoot)
+    {
+        if (bstRoot == nullptr) {
+            return 0;
+        }
+
+        int height = 0;
+        int levelSize = 1;   // 存储每一层的元素数量
+        queue<Node<T>*> tmpQueue;
+        tmpQueue.push(bstRoot);
+        while (!tmpQueue.empty()){
+            Node<T>* tmp = tmpQueue.front();
+            tmpQueue.pop();
+            levelSize--;
+            if (tmp->left != nullptr) {
+                tmpQueue.push(tmp->left);
+            }
+            if (tmp->right != nullptr) {
+                tmpQueue.push(tmp->right);
+            }
+
+            if (levelSize == 0) {
+                levelSize = tmpQueue.size();
+                height++;
+            }
+        }
+
+        return height;
+    }
+
+    /* 递归实现
+    int height()
+    {
+        return height(root);
+    }
+
+    int height(Node<T> *bstRoot) {
+        if (bstRoot == nullptr) {
+            return 0;
+        }
+        return 1 + max(height(bstRoot->left), height(bstRoot->right));
+    }*/
+
+
+    void* getRoot() const {
+        return (void*)root;
+    }
+
+    void* getLeft(void* node) const {
+        if (node != nullptr) {
+            Node<T> *tmpNode = (Node<T>*)node;
+            return (void*)tmpNode->left;
+        } else {
+            return 0;
+        }
+    }
+
+    void* getRight(void* node) const {
+        if (node != nullptr) {
+            Node<T> *tmpNode = (Node<T>*)node;
+            return (void*)tmpNode->right;
+        } else {
+            return 0;
+        }
+    }
+    std::string getString(void* node) const {
+        Node<T> *tmpNode = (Node<T>*)node;
+        if (tmpNode) {
+            return to_string(tmpNode->element);
+        }
+        if (tmpNode->left) {
+            return to_string(tmpNode->left->element);
+        }
+        if (tmpNode->right) {
+            return to_string(tmpNode->right->element);
+        }
+        return "";
+    }
+
 private:
+    int compare(T e1, T e2) {
+        if (comparator != nullptr) {
+            return comparator->compare(e1, e2);
+        }
+
+        return e1 - e2;
+    }
+
     void PreOrderTraversal(Node<T> *bstRoot) {
         if (bstRoot != nullptr) {
             cout << bstRoot->element << " ";
@@ -159,6 +282,10 @@ private:
      */
     
     void LevelOrderTraversal(Node<T> *bstRoot) {
+        if (bstRoot == nullptr) {
+            return;
+        }
+
         queue<Node<T>*> tmpQueue;
         tmpQueue.push(bstRoot);
         while (!tmpQueue.empty()){
@@ -178,7 +305,6 @@ private:
     Node<T> *root;
     Comparator<T> *comparator;
 };
-
 
 /* 示例 自定义比较器 ******************************************/
 class Person {
@@ -212,7 +338,7 @@ class PersonComparator : public Comparator<Person> {
 
 void test1()
 {
-    int array[] = {7, 4, 9, 2, 1, 3, 5, 8, 11, 10, 12}; 
+    int array[] = {7, 9, 2, 5, 8, 10, 0, 3, 6, -1, 1}; 
     BinarySearchTree<int> *bst = new BinarySearchTree<int>();
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
         bst->add(array[i]);
@@ -225,9 +351,13 @@ void test1()
     bst->PostOrder();
     cout << "LevelOrder" << endl;
     bst->LevelOrder();
-    
+    cout << bst->height() << endl;
+    cout << bst->isComplete() << endl;
+
+    cout << *bst;
 }
 
+/*
 void test2()
 {
     BinarySearchTree<Person> *bst = new BinarySearchTree<Person>();
@@ -241,7 +371,7 @@ void test2()
     bst->add(Person(3, "student_8"));
     bst->InOrder();
     bst->LevelOrder();
-}
+}*/
 
 /* 进行比较的元素要重载 - 运算符 */
 int main()

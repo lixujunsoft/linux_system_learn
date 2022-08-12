@@ -2,9 +2,11 @@
 #include <string>
 #include <queue>
 #include <cmath>
+#include <sstream>
 #include "./Printer.h"
 
 using namespace std;
+using std::stringstream;
 
 template <typename T>
 class Comparator {
@@ -227,13 +229,19 @@ public:
     std::string getString(void* node) const {
         Node<T> *tmpNode = (Node<T>*)node;
         if (tmpNode) {
-            return to_string(tmpNode->element);
+            stringstream *ss = new stringstream();
+            *ss << tmpNode->element;
+            return ss->str();
         }
         if (tmpNode->left) {
-            return to_string(tmpNode->left->element);
+            stringstream *ss = new stringstream();
+            *ss << tmpNode->left->element;
+            return ss->str();
         }
         if (tmpNode->right) {
-            return to_string(tmpNode->right->element);
+            stringstream *ss = new stringstream();
+            *ss << tmpNode->left->element;
+            return ss->str();
         }
         return "";
     }
@@ -280,7 +288,6 @@ private:
          将A的左子节点入队
          将A的右子节点入队
      */
-    
     void LevelOrderTraversal(Node<T> *bstRoot) {
         if (bstRoot == nullptr) {
             return;
@@ -322,7 +329,7 @@ public:
 };
 
 ostream& operator<<(ostream& out, const Person &person) {
-        out << "age:" << person.age << "__name:" << person.name;
+        out << "age:" << person.age << ",name:" << person.name;
         return out;
 }
 
@@ -357,25 +364,26 @@ void test1()
     cout << *bst;
 }
 
-/*
 void test2()
 {
     BinarySearchTree<Person> *bst = new BinarySearchTree<Person>();
-    bst->add(Person(7, "student_1"));
-    bst->add(Person(4, "student_2"));
-    bst->add(Person(9, "student_3"));
-    bst->add(Person(2, "student_4"));
-    bst->add(Person(5, "student_5"));
-    bst->add(Person(8, "student_6"));
-    bst->add(Person(11, "student_7"));
-    bst->add(Person(3, "student_8"));
+    bst->add(Person(7, "s_1"));
+    bst->add(Person(4, "s_2"));
+    bst->add(Person(9, "s_3"));
+    bst->add(Person(2, "s_4"));
+    bst->add(Person(5, "s_5"));
+    bst->add(Person(8, "s_6"));
+    bst->add(Person(11, "s_7"));
+    bst->add(Person(3, "s_8"));
     bst->InOrder();
     bst->LevelOrder();
-}*/
+    cout << endl;
+    cout << *bst;
+}
 
 /* 进行比较的元素要重载 - 运算符 */
 int main()
 {
-    test1();
-    // test2();
+    // test1();
+    test2();
 }

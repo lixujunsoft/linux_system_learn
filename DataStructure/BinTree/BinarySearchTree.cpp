@@ -101,7 +101,9 @@ public:
         treeSize++;
     }
 
-    void remove(T element);
+    void remove(T element) {
+        remove(node(element));
+    }
 
     bool contains(T element) {
         return false;
@@ -159,51 +161,7 @@ public:
 
         return true;
     }
-
-    /* 使用层序遍历实现计算树的高度 */
-    int height(Node<T> *bstRoot)
-    {
-        if (bstRoot == nullptr) {
-            return 0;
-        }
-
-        int height = 0;
-        int levelSize = 1;   // 存储每一层的元素数量
-        queue<Node<T>*> tmpQueue;
-        tmpQueue.push(bstRoot);
-        while (!tmpQueue.empty()){
-            Node<T>* tmp = tmpQueue.front();
-            tmpQueue.pop();
-            levelSize--;
-            if (tmp->left != nullptr) {
-                tmpQueue.push(tmp->left);
-            }
-            if (tmp->right != nullptr) {
-                tmpQueue.push(tmp->right);
-            }
-
-            if (levelSize == 0) {
-                levelSize = tmpQueue.size();
-                height++;
-            }
-        }
-
-        return height;
-    }
-
-    /* 递归实现
-    int height()
-    {
-        return height(root);
-    }
-
-    int height(Node<T> *bstRoot) {
-        if (bstRoot == nullptr) {
-            return 0;
-        }
-        return 1 + max(height(bstRoot->left), height(bstRoot->right));
-    }*/
-
+    
     Node<T> *Invert() {
         // return InvertTree_PreOrder(root);
         return InvertTree_InOrder(root);
@@ -231,6 +189,7 @@ public:
             return 0;
         }
     }
+
     std::string getString(void* node) const {
         Node<T> *tmpNode = (Node<T>*)node;
         if (tmpNode) {
@@ -370,6 +329,145 @@ private:
         return bstRoot;
     }
 
+    Node<T> *predecessor(Node<T> *bstNode) {
+        if (bstNode == nullptr) return nullptr;
+
+        // 前驱节点在左子树当中（left.right.right.right...）
+        Node<T> *tmp = bstNode->left;
+        if (tmp != nullptr) {
+            while (tmp->right != nullptr) {
+                tmp = tmp->right;
+            }
+            return tmp;
+        }
+
+        // 从父节点、祖父节点中寻找前驱节点
+        while (bstNode->parent != nullptr && bstNode == bstNode->parent->left) {
+            bstNode = bstNode->parent;
+        }
+
+        // 循环终止的两种情况
+        // 1.bstNode.parent == nullptr
+        // 2.node == node.parent.right
+        return bstNode->parent;
+    }
+
+    Node<T> *successor(Node<T> *bstNode) {
+        if (bstNode == nullptr) return nullptr;
+
+        // 前驱节点在左子树当中（right.left.left.left...）
+        Node<T> *tmp = bstNode->right;
+        if (tmp != nullptr) {
+            while (tmp->left != nullptr) {
+                tmp = tmp->left;
+            }
+            return tmp;
+        }
+
+        // 从父节点、祖父节点中寻找前驱节点
+        while (bstNode->parent != nullptr && bstNode == bstNode->parent->right) {
+            bstNode = bstNode->parent;
+        }
+
+        // 循环终止的两种情况
+        // 1.bstNode.parent == nullptr
+        // 2.node == node.parent.left
+        return bstNode->parent;
+    }
+
+    /* 使用层序遍历实现计算树的高度 */
+    int height(Node<T> *bstRoot)
+    {
+        if (bstRoot == nullptr) {
+            return 0;
+        }
+
+        int height = 0;
+        int levelSize = 1;   // 存储每一层的元素数量
+        queue<Node<T>*> tmpQueue;
+        tmpQueue.push(bstRoot);
+        while (!tmpQueue.empty()){
+            Node<T>* tmp = tmpQueue.front();
+            tmpQueue.pop();
+            levelSize--;
+            if (tmp->left != nullptr) {
+                tmpQueue.push(tmp->left);
+            }
+            if (tmp->right != nullptr) {
+                tmpQueue.push(tmp->right);
+            }
+
+            if (levelSize == 0) {
+                levelSize = tmpQueue.size();
+                height++;
+            }
+        }
+
+        return height;
+    }
+
+    /* 递归实现
+    int height(Node<T> *bstRoot) {
+        if (bstRoot == nullptr) {
+            return 0;
+        }
+        return 1 + max(height(bstRoot->left), height(bstRoot->right));
+    }*/
+
+    void remove(Node<T> *bstNode) {
+        if (bstNode == nullptr) {
+            return;
+        }
+
+        treeSize--;
+        if (bstNode->hasTwoChildren()) { // 度为2的节点
+            Node<T> *s = successor(bstNode);
+            // 用后继节点的值覆盖度为2的节点的值
+            bstNode->element = s->element;
+            // 删除后继节点
+            bstNode = s;
+        }
+
+        // 删除bstNode节点(bstNode节点的度必然是0或者1)
+        Node<T> *replacement = bstNode->left != nullptr ? bstNode->left : bstNode->right;
+        if (replacement != nullptr) { // bstNode是度为1的节点
+            // 更改parent
+            replacement->parent = bstNode->parent;
+            // 更改parent的left、right的指向
+            if (bstNode->parent == nullptr) {   // bstNode是度为1的节点，并且是根节点 
+                root = replacement;
+            } else if (bstNode == bstNode->parent->left) {
+                bstNode->parent->left = replacement;
+            } else {
+                bstNode->parent->right = replacement;
+            }
+        } else if (bstNode->parent == nullptr) { // bstNode是叶子节点，并且是根节点
+            root = nullptr;
+        } else { // bstNode是叶子节点，但不是根节点
+            if (bstNode == bstNode->parent->right) {
+                bstNode->parent->right = nullptr;
+            } else {
+                bstNode->parent->left = nullptr;
+            }
+        }
+
+    }
+
+    Node<T> *node(T element) {
+        Node<T> *node = root;
+        while (node != nullptr) {
+            int cmp = compare(element, node->element);
+            if (cmp == 0) {
+                return node;
+            } else if (cmp > 0) {
+                node = node->right;
+            } else {
+                node = node->left;
+            }
+        }
+        return nullptr;
+    }
+
     int treeSize;
     Node<T> *root;
     Comparator<T> *comparator;
@@ -423,7 +521,10 @@ void test1()
     cout << bst->height() << endl;
     cout << bst->isComplete() << endl;
     cout << *bst;
-    bst->Invert();
+    // bst->Invert();
+    // cout << *bst;
+    bst->remove(2);
+    bst->remove(9);
     cout << *bst;
 }
 

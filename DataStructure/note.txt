@@ -66,6 +66,48 @@
        不然结果不唯一
 
      前驱节点：中序遍历时的前一个节点
+     1.node.left != null
+       predecessor = node.left.right.right.right...
+       终止条件：right为null
+     2.node.left == null && node.parent != null
+       predecessor = node.parent.parent.parent...
+       终止条件：node在parent的右子树中
+     3.node.left == null && node.parent == null
+       没有前驱节点
+
+     后继节点：中序遍历时的后一个节点
+     1.node.right != null
+       successor = node.right.left.left.left...
+       终止条件：left为null
+     2.node.right == null && node.parent != null
+       successor = node.parent.parent.parent...
+       终止条件：node在parent的左子树中
+     3.node.right == null && node.parent == null
+       没有后继节点
+
+     删除节点：
+     A1.删除度为0的节点(叶子节点)
+        1.node == node.parent.left
+          node.parent.left = null
+        2.node == node.parent.right
+          node.parent.right = null
+        3.node.parent == null
+          root = null
+     A2.删除度为1的节点
+        用子节点替代原节点的位置
+        1.如果node是左子节点
+          child.parent = node.parent
+          node.parent.left = child
+        2.如果node是右子节点
+          child.parent = node.parent
+          node.parent.right = child
+        3.如果node是更节点
+          root = child
+          child->parent = null
+     A3.删除度为2的节点
+        1.先用前驱或者后继节点的值覆盖原节点的值
+        2.然后删除相应的前驱或者后继节点
+        如果一个节点的度为2,那么它的前驱、后继节点的度只可能是1和0
 
 /********************************************************************************/
 二叉搜索树：二叉搜索树是二叉树的一种，是应用非常广泛的一种二叉树，英文简称为BST

@@ -17,6 +17,7 @@
         "ostream": "cpp",
         "list": "cpp",
         "memory_resource": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "sstream": "cpp"
     }
 }

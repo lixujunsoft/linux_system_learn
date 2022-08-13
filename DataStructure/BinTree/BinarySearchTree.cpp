@@ -52,7 +52,9 @@ public:
         this->comparator = comparator;
     }
 
-    ~BinarySearchTree() {}
+    ~BinarySearchTree() {
+        this->clear();
+    }
     
     int size() {
         return treeSize;
@@ -62,7 +64,10 @@ public:
         return treeSize == 0;
     }
 
-    void clear();
+    void clear() {
+        Clear_PostOrder(root);
+        root = nullptr;
+    }
 
     void add(T element) {
         // 添加的是第一个节点
@@ -106,7 +111,7 @@ public:
     }
 
     bool contains(T element) {
-        return false;
+        return node(element) != nullptr;
     }
 
     void PreOrder() {
@@ -129,8 +134,7 @@ public:
         LevelOrderTraversal(root);
     }
 
-    int height()
-    {
+    int height() {
         return height(root);
     }
 
@@ -468,6 +472,15 @@ private:
         return nullptr;
     }
 
+    void Clear_PostOrder(Node<T> *bstRoot)
+    {
+        if (bstRoot != nullptr) {
+            Clear_PostOrder(bstRoot->left);
+            Clear_PostOrder(bstRoot->right);
+            delete bstRoot;
+        }
+    }
+
     int treeSize;
     Node<T> *root;
     Comparator<T> *comparator;
@@ -546,9 +559,39 @@ void test2()
     cout << *bst;
 }
 
+void test3()
+{
+    int array[] = {7, 4, 9, 2, 5, 8, 11, 3, 12, 1}; 
+    BinarySearchTree<int> *bst = new BinarySearchTree<int>();
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
+        bst->add(array[i]);
+    }
+    cout << "PreOrder" << endl;
+    bst->PreOrder();
+    cout << "InOrder" << endl;
+    bst->InOrder();
+    cout << "PostOrder" << endl;
+    bst->PostOrder();
+    cout << "LevelOrder" << endl;
+    bst->LevelOrder();
+    cout << bst->height() << endl;
+    cout << bst->isComplete() << endl;
+    cout << *bst;
+    // bst->remove(1);
+    // bst->remove(3);
+    // bst->remove(12);
+    // cout << *bst;
+    bst->remove(7);
+    cout << *bst;
+    // bst->clear();
+    // cout << *bst;
+    delete bst;
+}
+
 /* 进行比较的元素要重载 - 运算符 */
 int main()
 {
-    test1();
+    // test1();
     // test2();
+    test3();
 }

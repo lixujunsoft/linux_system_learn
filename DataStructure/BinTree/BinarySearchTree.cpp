@@ -450,7 +450,7 @@ private:
                 bstNode->parent->left = nullptr;
             }
         }
-
+        delete bstNode;
     }
 
     Node<T> *node(T element) {
@@ -525,6 +525,7 @@ void test1()
     // cout << *bst;
     bst->remove(2);
     bst->remove(9);
+    bst->remove(7);
     cout << *bst;
 }
 

@@ -444,10 +444,10 @@ private:
         } else if (bstNode->parent == nullptr) { // bstNode是叶子节点，并且是根节点
             root = nullptr;
         } else { // bstNode是叶子节点，但不是根节点
-            if (bstNode == bstNode->parent->right) {
-                bstNode->parent->right = nullptr;
-            } else {
+            if (bstNode == bstNode->parent->left) {
                 bstNode->parent->left = nullptr;
+            } else {
+                bstNode->parent->right = nullptr;
             }
         }
         delete bstNode;

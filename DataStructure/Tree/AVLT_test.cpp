@@ -56,7 +56,7 @@ void test1() {
 }
 
 void test2() {
-    int array[] = {1, 2, 3, 4, 5, 6, 7}; 
+    int array[] = {85, 19, 69, 3, 7, 99, 95, 2, 1, 70, 44, 58}; 
     AVLTree<int> *avlt = new AVLTree<int>();
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
         avlt->add(array[i]);
@@ -73,13 +73,12 @@ void test2() {
     cout << avlt->height() << endl;
     cout << avlt->isComplete() << endl;
     cout << *avlt;
-    avlt->remove(4);
-    cout << *avlt;
     delete avlt;
 }
 
 int main()
 {
     // test1();
+    cout << "*******************" << endl;
     test2();
 }

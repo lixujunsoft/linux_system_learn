@@ -93,10 +93,13 @@ public:
             if (tmp->hasTwoChildren()) {
                 tmpQueue.push(tmp->left);
                 tmpQueue.push(tmp->right);
-            } else if (tmp->left == nullptr && tmp->left != nullptr) {
+            } else if (tmp->left == nullptr && tmp->right != nullptr) {
                 return false;
             } else { // 后面遍历的节点都必须是叶子节点
                 leaf = true;
+                if (tmp->left != nullptr) {
+                    tmpQueue.push(tmp->left);
+                }
             }
         }
         return true;

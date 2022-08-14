@@ -111,10 +111,33 @@ void test3()
     delete bst;
 }
 
+void test4()
+{
+    int array[] = {7, 4, 9, 2, 1}; 
+    BinarySearchTree<int> *bst = new BinarySearchTree<int>();
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
+        bst->add(array[i]);
+    }
+    cout << "PreOrder" << endl;
+    bst->PreOrder();
+    cout << "InOrder" << endl;
+    bst->InOrder();
+    cout << "PostOrder" << endl;
+    bst->PostOrder();
+    cout << "LevelOrder" << endl;
+    bst->LevelOrder();
+    cout << endl;
+    cout << bst->height() << endl;
+    cout << bst->isComplete() << endl;
+    cout << *bst;
+    delete bst;
+}
+
 /* 进行比较的元素要重载 - 运算符 */
 int main()
 {
     // test1();
-    test2();
+    // test2();
     // test3();
+    test4();
 }

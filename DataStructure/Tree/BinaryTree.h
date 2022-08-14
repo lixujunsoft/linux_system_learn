@@ -87,19 +87,24 @@ public:
         while (!tmpQueue.empty()){
             Node<T>* tmp = tmpQueue.front();
             tmpQueue.pop();
+
             if (leaf && !tmp->isLeaf()) {
                 return false;
             }
-            if (tmp->hasTwoChildren()) {
+
+            if (tmp->left != nullptr) {
                 tmpQueue.push(tmp->left);
-                tmpQueue.push(tmp->right);
-            } else if (tmp->left == nullptr && tmp->right != nullptr) {
+            } else if (tmp->right != nullptr) {
+                // tmp->left == nullptr && tmp->right != nullptr
                 return false;
-            } else { // 后面遍历的节点都必须是叶子节点
+            }
+
+            if (tmp->right != nullptr) {
+                tmpQueue.push(tmp->right);
+            } else {
+                // tmp->left == nullptr && tmp->right == nullptr
+                // tmp->left != nullptr && tmp->right == nullptr
                 leaf = true;
-                if (tmp->left != nullptr) {
-                    tmpQueue.push(tmp->left);
-                }
             }
         }
         return true;

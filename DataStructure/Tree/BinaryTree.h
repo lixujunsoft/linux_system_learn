@@ -100,7 +100,7 @@ public:
             }
 
             if (tmp->right != nullptr) {
-                tmpQueue.push(tmp->right);
+                tmpQueuepush(tmp->right);
             } else {
                 // tmp->left == nullptr && tmp->right == nullptr
                 // tmp->left != nullptr && tmp->right == nullptr

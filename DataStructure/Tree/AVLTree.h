@@ -99,27 +99,7 @@ private:
         g->right = child_p;
         p->left = g;
 
-        // 让p成为子树的根节点
-        p->parent = g->parent;
-        if (((AVLNode<T>*)g)->isLeftChild()) {
-            g->parent->left = p;
-        } else if (((AVLNode<T>*)g)->isRightChild()){
-            g->parent->right = p;
-        } else { // 根节点
-            this->root = p;
-        }
-
-        // 更新child_p的parent
-        if (child_p != nullptr) {
-            child_p->parent = g;
-        }
-
-        // 更新g的parent
-        g->parent = p;
-
-        // 更新高度
-        updateHeight(g);
-        updateHeight(p);
+        afterRotate(g, p, child_p);
     }
 
     void rotateRight(Node<T> *g) {
@@ -128,6 +108,10 @@ private:
         g->left = child_p;
         p->right = g;
 
+        afterRotate(g, p, child_p);
+    }
+
+    void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {
         // 让p成为子树的根节点
         p->parent = g->parent;
         if (((AVLNode<T>*)g)->isLeftChild()) {

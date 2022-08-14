@@ -8,7 +8,7 @@ using namespace std;
 template <typename T>
 class Node {
 public:
-    Node(T element, Node *parent) {
+    Node(T element, Node<T> *parent) {
         this->element = element;
         this->parent = parent;
         this->left = nullptr;
@@ -24,9 +24,9 @@ public:
     }
 
     T element;
-    Node *left;
-    Node *right;
-    Node *parent;
+    Node<T> *left;
+    Node<T> *right;
+    Node<T> *parent;
 };
 
 template <class T>
@@ -100,7 +100,7 @@ public:
             }
 
             if (tmp->right != nullptr) {
-                tmpQueuepush(tmp->right);
+                tmpQueue.push(tmp->right);
             } else {
                 // tmp->left == nullptr && tmp->right == nullptr
                 // tmp->left != nullptr && tmp->right == nullptr
@@ -333,6 +333,10 @@ protected:
             Clear_PostOrder(bstRoot->right);
             delete bstRoot;
         }
+    }
+
+    virtual Node<T> *createNode(T element, Node<T> *parent) {
+        return new Node<T>(element, parent);
     }
 
     int treeSize;

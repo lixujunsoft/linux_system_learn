@@ -18,6 +18,7 @@
         "list": "cpp",
         "memory_resource": "cpp",
         "queue": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "cmath": "cpp"
     }
 }

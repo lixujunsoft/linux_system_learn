@@ -33,8 +33,9 @@ public:
     void add(T element) {
         // 添加的是第一个节点
         if (this->root == nullptr) {
-            this->root = new Node<T>(element, nullptr);
+            this->root = this->createNode(element, nullptr);
             this->treeSize++;
+            afterAdd(this->root);
             return;
         }
         // 添加的不是第一个节点
@@ -55,13 +56,14 @@ public:
             }
         }
         // 看看插入到父节点的那个位置
-        Node<T> *newNode = new Node<T>(element, parent);
+        Node<T> *newNode = this->createNode(element, parent);
         if (cmp > 0) {
             parent->right = newNode;
         } else {
             parent->left = newNode;
         }
         this->treeSize++;
+        afterAdd(newNode);
     }   
 
     void remove(T element) {
@@ -70,7 +72,10 @@ public:
 
     bool contains(T element) {
         return node(element) != nullptr;
-    }   
+    }
+
+protected:
+    virtual void afterAdd(Node<T> *node) {}
 
 private:
     int compare(T e1, T e2) {

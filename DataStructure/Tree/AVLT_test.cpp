@@ -37,8 +37,7 @@ class PersonComparator : public Comparator<Person> {
 };
 /**********************************************************/
 
-void test()
-{
+void test1() {
     AVLTree<Person> *avlt = new AVLTree<Person>(new PersonComparator());
     avlt->add(Person(7, "s_1"));
     avlt->add(Person(4, "s_2"));
@@ -56,7 +55,31 @@ void test()
     cout << *avlt;
 }
 
+void test2() {
+    int array[] = {1, 2, 3, 4, 5, 6, 7}; 
+    AVLTree<int> *avlt = new AVLTree<int>();
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
+        avlt->add(array[i]);
+    }
+    cout << "PreOrder" << endl;
+    avlt->PreOrder();
+    cout << "InOrder" << endl;
+    avlt->InOrder();
+    cout << "PostOrder" << endl;
+    avlt->PostOrder();
+    cout << "LevelOrder" << endl;
+    avlt->LevelOrder();
+    cout << endl;
+    cout << avlt->height() << endl;
+    cout << avlt->isComplete() << endl;
+    cout << *avlt;
+    avlt->remove(4);
+    cout << *avlt;
+    delete avlt;
+}
+
 int main()
 {
-    test();
+    // test1();
+    test2();
 }

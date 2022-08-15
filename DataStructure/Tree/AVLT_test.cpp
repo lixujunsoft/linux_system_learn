@@ -61,17 +61,14 @@ void test2() {
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
         avlt->add(array[i]);
     }
-    cout << "PreOrder" << endl;
-    avlt->PreOrder();
-    cout << "InOrder" << endl;
-    avlt->InOrder();
-    cout << "PostOrder" << endl;
-    avlt->PostOrder();
-    cout << "LevelOrder" << endl;
-    avlt->LevelOrder();
-    cout << endl;
-    cout << avlt->height() << endl;
-    cout << avlt->isComplete() << endl;
+
+    cout << *avlt;
+    cout << "*******************" << endl;
+    avlt->remove(21);
+    cout << *avlt;
+    avlt->remove(19);
+    cout << *avlt;
+    avlt->remove(14);
     cout << *avlt;
     delete avlt;
 }

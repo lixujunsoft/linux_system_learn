@@ -64,6 +64,19 @@ protected:
         }
     }
 
+    virtual void afterRemove(Node<T> * node) {
+        while ((node = node->parent) != nullptr) {
+            if (isBalanced(node)) {
+                // 更新高度
+                updateHeight(node);
+            } else {
+                // 恢复平衡
+                rebalance(node);
+                // rebalance2(node);
+            }
+        }
+    }
+
     virtual Node<T> *createNode(T element, Node<T> *node) {
         return new AVLNode<T>(element, node);
     }
@@ -74,7 +87,6 @@ private:
     }
 
     void rebalance(Node<T> *grand) {
-        // 传入的node是高度最低的不平衡节点
         AVLNode<T> *parent = (AVLNode<T>*)((AVLNode<T>*)grand)->tallerChild();
         AVLNode<T> *node = (AVLNode<T>*)((AVLNode<T>*)parent)->tallerChild();
         if (parent->isLeftChild()) {

@@ -76,6 +76,7 @@ public:
 
 protected:
     virtual void afterAdd(Node<T> *node) {}
+    virtual void afterRemove(Node<T> * node) {}
 
 private:
     int compare(T e1, T e2) {
@@ -119,6 +120,8 @@ private:
                 bstNode->parent->right = nullptr;
             }
         }
+
+        afterRemove(bstNode);
         delete bstNode;
     }   
 

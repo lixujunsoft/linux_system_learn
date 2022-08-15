@@ -58,6 +58,7 @@ protected:
             } else {
                 // 恢复平衡
                 rebalance(node);
+                // rebalance2(node);
                 break;
             }
         }
@@ -91,6 +92,73 @@ private:
                 rotateLeft(grand);
             }
         }
+    }
+
+    void rebalance2(Node<T> *grand) {
+        // 传入的node是高度最低的不平衡节点
+        AVLNode<T> *parent = (AVLNode<T>*)((AVLNode<T>*)grand)->tallerChild();
+        AVLNode<T> *node = (AVLNode<T>*)((AVLNode<T>*)parent)->tallerChild();
+        if (parent->isLeftChild()) {
+            if (node->isLeftChild()) { // LL
+                rotate(grand, node->left, node, node->right, parent, parent->right, grand, grand->right);
+            } else { // LR
+                rotate(grand, parent->left, parent, node->left, node, node->right, grand, grand->right);
+            } 
+        } else {
+            if (node->isLeftChild()) { // RL
+                rotate(grand, grand->left, grand, node->left, node, node->right, parent, parent->right);
+            } else { // RR
+                rotate(grand, grand->left, grand, parent->left, parent, node->left, node, node->right);
+            }
+        }
+    }
+
+    void rotate(Node<T>* r, //  子树根节点
+        Node<T> *a, Node<T>* b, Node<T>* c, 
+        Node<T>* d, 
+        Node<T>* e, Node<T>* f, Node<T>* g) {
+        // 让d成为子树的根节点
+        d->parent = r->parent;
+        if (((AVLNode<T>*)r)->isLeftChild()) {
+            r->parent->left = d;
+        } else if (((AVLNode<T>*)r)->isRightChild()) {
+            r->parent->right = d;
+        } else {
+            this->root = d;
+        }
+
+        // a-b-c
+        b->left = a;
+        if (a != nullptr) {
+            a->parent = b;
+        }
+
+        b->right = c;
+        if (c != nullptr) {
+            c->parent = b;
+        }
+
+        updateHeight(b);
+
+        // e-f-g
+        f->left = e;
+        if (e != nullptr) {
+            e->parent = f;
+        }
+
+        f->right = g;
+        if (g != nullptr) {
+            g->parent = f;
+        }
+
+        updateHeight(f);
+
+        // b-d-f
+        d->left = b;
+        d->right = f;
+        b->parent = d;
+        f->parent = d;
+        updateHeight(d);
     }
 
     void rotateLeft(Node<T> *g) {

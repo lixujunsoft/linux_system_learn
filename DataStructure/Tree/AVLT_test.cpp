@@ -56,7 +56,7 @@ void test1() {
 }
 
 void test2() {
-    int array[] = {85, 19, 69, 3, 7, 99, 95, 2, 1, 70, 44, 58}; 
+    int array[] = {85, 19, 69, 3, 7, 99, 95, 2, 1, 70, 44, 58, 11, 21, 14, 93, 57, 4, 56, 94}; 
     AVLTree<int> *avlt = new AVLTree<int>();
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
         avlt->add(array[i]);

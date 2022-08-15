@@ -22,9 +22,9 @@ public:
     Node<T> *tallerChild() {
         int leftHeight = this->left == nullptr ? 0 : ((AVLNode<T>*)(this->left))->height;
         int rightHeight = this->right == nullptr ? 0 : ((AVLNode<T>*)(this->right))->height;
-        if (rightHeight > rightHeight) {
+        if (leftHeight > rightHeight) {
             return this->left;
-        } else if (rightHeight < rightHeight) {
+        } else if (leftHeight < rightHeight) {
             return this->right;
         } else {
             return isLeftChild() ? this->left : this->right;

@@ -57,19 +57,18 @@ void test1() {
 
 void test2() {
     int array[] = {85, 19, 69, 3, 7, 99, 95, 2, 1, 70, 44, 58, 11, 21, 14, 93, 57, 4, 56, 94}; 
+    // int array[] = {85, 19, 69, 3, 7, 99, 95}; 
     AVLTree<int> *avlt = new AVLTree<int>();
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
         avlt->add(array[i]);
     }
 
     cout << *avlt;
-    cout << "*******************" << endl;
-    avlt->remove(21);
-    cout << *avlt;
-    avlt->remove(19);
-    cout << *avlt;
-    avlt->remove(14);
-    cout << *avlt;
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) {
+        cout << "delete [" << to_string(array[i]) << "]" << endl;
+        avlt->remove(array[i]);
+        cout << *avlt;
+    }
     delete avlt;
 }
 

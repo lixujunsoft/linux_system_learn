@@ -111,17 +111,19 @@ private:
             } else {
                 bstNode->parent->right = replacement;
             }
+            afterRemove(bstNode); // 写到if里面是为了兼容红黑树
         } else if (bstNode->parent == nullptr) { // bstNode是叶子节点，并且是根节点
             this->root = nullptr;
+            afterRemove(bstNode); // 写到if里面是为了兼容红黑树
         } else { // bstNode是叶子节点，但不是根节点
             if (bstNode == bstNode->parent->left) {
                 bstNode->parent->left = nullptr;
             } else {
                 bstNode->parent->right = nullptr;
             }
+            afterRemove(bstNode); // 写到if里面是为了兼容红黑树
         }
 
-        afterRemove(bstNode);
         delete bstNode;
     }   
 

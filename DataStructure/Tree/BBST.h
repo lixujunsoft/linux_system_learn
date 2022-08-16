@@ -34,8 +34,6 @@ protected:
             c->parent = b;
         }
 
-        updateHeight(b);
-
         // e-f-g
         f->left = e;
         if (e != nullptr) {
@@ -47,14 +45,13 @@ protected:
             g->parent = f;
         }
 
-        updateHeight(f);
-
         // b-d-f
         d->left = b;
         d->right = f;
         b->parent = d;
         f->parent = d;
-        updateHeight(d);
+
+        afterUnitedRotate(b, f, d);
     }
 
     void rotateLeft(Node<T> *g) {
@@ -63,8 +60,8 @@ protected:
         g->right = child_p;
         p->left = g;
 
-        afterRotate1(g, p, child_p);
         afterRotate(g, p, child_p);
+        afterRotate(g, p);
     }
 
     void rotateRight(Node<T> *g) {
@@ -73,11 +70,11 @@ protected:
         g->left = child_p;
         p->right = g;
 
-        afterRotate1(g, p, child_p);
         afterRotate(g, p, child_p);
+        afterRotate(g, p);
     }
 
-    void afterRotate1(Node<T> *g, Node<T> *p, Node<T> *child_p) {
+    void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {
         // 让p成为子树的根节点
         p->parent = g->parent;
         if (g->isLeftChild()) {
@@ -97,5 +94,6 @@ protected:
         g->parent = p;
     }
 
-    virtual void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {}
+    virtual void afterRotate(Node<T> *g, Node<T> *p) {}
+    virtual void afterUnitedRotate(Node<T> *b, Node<T> *f, Node<T> *d) {}
 };

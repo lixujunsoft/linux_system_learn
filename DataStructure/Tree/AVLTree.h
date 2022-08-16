@@ -49,8 +49,8 @@ protected:
                 updateHeight(node);
             } else {
                 // 恢复平衡
-                rebalance(node);
-                // rebalance2(node);
+                // rebalance(node);
+                rebalance2(node);
                 break;
             }
         }
@@ -63,8 +63,8 @@ protected:
                 updateHeight(node);
             } else {
                 // 恢复平衡
-                rebalance(node);
-                // rebalance2(node);
+                // rebalance(node);
+                rebalance2(node);
             }
         }
     }
@@ -104,23 +104,29 @@ private:
         AVLNode<T> *node = (AVLNode<T>*)((AVLNode<T>*)parent)->tallerChild();
         if (parent->isLeftChild()) {
             if (node->isLeftChild()) { // LL
-                rotate(grand, node->left, node, node->right, parent, parent->right, grand, grand->right);
+                this->rotate(grand, node->left, node, node->right, parent, parent->right, grand, grand->right);
             } else { // LR
-                rotate(grand, parent->left, parent, node->left, node, node->right, grand, grand->right);
+                this->rotate(grand, parent->left, parent, node->left, node, node->right, grand, grand->right);
             } 
         } else {
             if (node->isLeftChild()) { // RL
-                rotate(grand, grand->left, grand, node->left, node, node->right, parent, parent->right);
+                this->rotate(grand, grand->left, grand, node->left, node, node->right, parent, parent->right);
             } else { // RR
-                rotate(grand, grand->left, grand, parent->left, parent, node->left, node, node->right);
+                this->rotate(grand, grand->left, grand, parent->left, parent, node->left, node, node->right);
             }
         }
     }
 
-    virtual void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {
+    virtual void afterRotate(Node<T> *g, Node<T> *p) {
         // 更新高度
         updateHeight(g);
         updateHeight(p);
+    }
+
+    virtual void afterUnitedRotate(Node<T> *b, Node<T> *f, Node<T> *d) {
+        updateHeight(b);
+        updateHeight(f);
+        updateHeight(d);
     }
 
     void updateHeight(Node<T> *node) {

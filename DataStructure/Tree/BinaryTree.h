@@ -23,6 +23,25 @@ public:
         return left != nullptr && right != nullptr;
     }
 
+    bool isLeftChild() {
+        return this->parent != nullptr && this == this->parent->left;
+    }
+
+    bool isRightChild() {
+        return this->parent != nullptr && this == this->parent->right;
+    }
+
+    // 访问兄弟节点
+    Node<T> *sibling() {
+        if (isLeftChild()) {
+            return parent->right;
+        } else if (isRightChild()) {
+            return parent->left;
+        } else {
+            return nullptr;
+        }
+    }
+
     T element;
     Node<T> *left;
     Node<T> *right;

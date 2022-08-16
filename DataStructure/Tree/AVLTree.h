@@ -27,16 +27,8 @@ public:
         } else if (leftHeight < rightHeight) {
             return this->right;
         } else {
-            return isLeftChild() ? this->left : this->right;
+            return this->isLeftChild() ? this->left : this->right;
         }
-    }
-
-    bool isLeftChild() {
-        return this->parent != nullptr && this == this->parent->left;
-    }
-
-    bool isRightChild() {
-        return this->parent != nullptr && this == this->parent->right;
     }
 
     int height;

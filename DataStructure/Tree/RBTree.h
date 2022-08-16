@@ -40,13 +40,37 @@ protected:
             black(uncle);
             // 把祖父节点当作是新添加的节点
             afterAdd(red(grand));
-        } else { // 叔父节点不是红色
-            // TODO
+            return;
+        }
+        
+        // 叔父节点不是红色
+        if (parent->isLeftChild()) { // L
+            red(grand);
+            if (node->isLeftChild()) { // LL (右旋转)
+                black(parent);
+            } else { // LR
+                black(node);
+                this->rotateLeft(parent);
+            }
+            this->rotateRight(grand);
+        } else { // R
+            red(grand);
+            if (node->isLeftChild()) { // RL (左旋转)
+                black(node);
+                this->rotateRight(parent);
+            } else { // RR
+                black(parent);
+            }
+            this->rotateLeft(grand);
         }
     }
 
     virtual void afterRemove(Node<T> *node) {
 
+    }
+
+    virtual Node<T> *createNode(T element, Node<T> *node) {
+        return new RBNode<T>(element, node);
     }
 
 private:

@@ -19,7 +19,30 @@ public:
 
 protected:
     virtual void afterAdd(Node<T> *node) {
+        Node<T> *parent = node->parent;
 
+        // 添加的是根节点
+        if (parent == nullptr) {
+            black(node);
+            return;
+        }
+        // 如果父节点是黑色，直接返回
+        if (isBlack(parent)) {
+            return;
+        }
+
+        // 叔父节点
+        Node<T> *uncle = parent->sibling();
+        // 祖父节点
+        Node<T> *grand = parent->parent;
+        if (isRed(uncle)) { // 叔父节点是红色
+            black(parent);
+            black(uncle);
+            // 把祖父节点当作是新添加的节点
+            afterAdd(red(grand));
+        } else { // 叔父节点不是红色
+            // TODO
+        }
     }
 
     virtual void afterRemove(Node<T> *node) {

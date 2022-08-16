@@ -1,4 +1,4 @@
-#include "./BST.h"
+#include "./BBST.h"
 
 #define RED   false
 #define BLACK true
@@ -11,10 +11,10 @@ public:
 };
 
 template <typename T>
-class RBTree : public BinarySearchTree<T> {
+class RBTree : public BBST<T> {
 public:
     RBTree() {}
-    RBTree(Comparator<T> *comparator) : BinarySearchTree<T>(comparator) {}
+    RBTree(Comparator<T> *comparator) : BBST<T>(comparator) {}
     ~RBTree() {}
 
 protected:
@@ -71,6 +71,21 @@ protected:
 
     virtual Node<T> *createNode(T element, Node<T> *node) {
         return new RBNode<T>(element, node);
+    }
+
+    virtual string toString(Node<T> *node) const {
+        string str;
+        RBNode<T>* tmpNode = (RBNode<T>*)node;
+        if (tmpNode) {
+            stringstream *ss = new stringstream();
+            *ss << tmpNode->element;
+            if (RED == tmpNode->color) {
+                return str + "R_" + ss->str();
+            } else {
+                return str + "B_" + ss->str();
+            }
+        }
+        return "";
     }
 
 private:

@@ -158,19 +158,13 @@ public:
     std::string getString(void* node) const {
         Node<T> *tmpNode = (Node<T>*)node;
         if (tmpNode) {
-            stringstream *ss = new stringstream();
-            *ss << tmpNode->element;
-            return ss->str();
-        }
-        if (tmpNode->left) {
-            stringstream *ss = new stringstream();
-            *ss << tmpNode->left->element;
-            return ss->str();
-        }
-        if (tmpNode->right) {
-            stringstream *ss = new stringstream();
-            *ss << tmpNode->left->element;
-            return ss->str();
+            if (toString(tmpNode).empty()) {
+                stringstream *ss = new stringstream();
+                *ss << tmpNode->element;
+                return ss->str();
+            } else {
+                return toString(tmpNode);
+            }
         }
         return "";
     }
@@ -356,6 +350,10 @@ protected:
 
     virtual Node<T> *createNode(T element, Node<T> *parent) {
         return new Node<T>(element, parent);
+    }
+
+    virtual string toString(Node<T> *node) const {
+        return "";
     }
 
     int treeSize;

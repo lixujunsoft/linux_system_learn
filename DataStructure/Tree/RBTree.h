@@ -6,7 +6,7 @@
 template <typename T>
 class RBNode : public Node<T> {
 public:
-    RBNode(T element, Node<T> *rbNode) : Node<T>(element, rbNode) {}
+    RBNode(T element, Node<T> *rbNode) : Node<T>(element, rbNode), color(RED) {}
     bool color;
 };
 

@@ -15,9 +15,9 @@ protected:
         Node<T>* e, Node<T>* f, Node<T>* g) {
         // 让d成为子树的根节点
         d->parent = r->parent;
-        if (((AVLNode<T>*)r)->isLeftChild()) {
+        if (r->isLeftChild()) {
             r->parent->left = d;
-        } else if (((AVLNode<T>*)r)->isRightChild()) {
+        } else if (r->isRightChild()) {
             r->parent->right = d;
         } else {
             this->root = d;
@@ -63,6 +63,7 @@ protected:
         g->right = child_p;
         p->left = g;
 
+        afterRotate1(g, p, child_p);
         afterRotate(g, p, child_p);
     }
 
@@ -72,15 +73,16 @@ protected:
         g->left = child_p;
         p->right = g;
 
+        afterRotate1(g, p, child_p);
         afterRotate(g, p, child_p);
     }
 
     void afterRotate1(Node<T> *g, Node<T> *p, Node<T> *child_p) {
         // 让p成为子树的根节点
         p->parent = g->parent;
-        if (((AVLNode<T>*)g)->isLeftChild()) {
+        if (g->isLeftChild()) {
             g->parent->left = p;
-        } else if (((AVLNode<T>*)g)->isRightChild()){
+        } else if (g->isRightChild()){
             g->parent->right = p;
         } else { // 根节点
             this->root = p;
@@ -95,7 +97,5 @@ protected:
         g->parent = p;
     }
 
-    virtual void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {
-        
-    }
+    virtual void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {}
 };

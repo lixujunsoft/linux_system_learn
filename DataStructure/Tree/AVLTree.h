@@ -83,17 +83,17 @@ private:
         AVLNode<T> *node = (AVLNode<T>*)((AVLNode<T>*)parent)->tallerChild();
         if (parent->isLeftChild()) {
             if (node->isLeftChild()) { // LL
-                rotateRight(grand);
+                this->rotateRight(grand);
             } else { // LR
-                rotateLeft(parent);
-                rotateRight(grand);
+                this->rotateLeft(parent);
+                this->rotateRight(grand);
             } 
         } else {
             if (node->isLeftChild()) { // RL
-                rotateRight(parent);
-                rotateLeft(grand);
+                this->rotateRight(parent);
+                this->rotateLeft(grand);
             } else { // RR
-                rotateLeft(grand);
+                this->rotateLeft(grand);
             }
         }
     }
@@ -118,7 +118,6 @@ private:
     }
 
     virtual void afterRotate(Node<T> *g, Node<T> *p, Node<T> *child_p) {
-        afterRotate1(g, p, child_p);
         // 更新高度
         updateHeight(g);
         updateHeight(p);

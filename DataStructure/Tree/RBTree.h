@@ -84,13 +84,13 @@ protected:
         }
         
         // 删除的是黑色叶子节点
-        bool left = parent->left == nullptr;
+        bool left = parent->left == nullptr || node->isLeftChild();
         Node<T> *sibling = left ? parent->right : parent->left;
         if (left) { // 左边为空，被删除节点的兄弟节点可能在右边
             if (isRed(sibling)) { // 兄弟节点是红色
                 black(sibling);
                 red(parent);
-                rotateLeft(parent);
+                this->rotateLeft(parent);
                 // 更换兄弟
                 sibling = parent->right;
             }
@@ -108,7 +108,7 @@ protected:
             } else { // 兄弟节点至少有一个红色子节点
                 // 兄弟节点的左子节点是黑色的，先对兄弟节点进行左旋转
                 if (isBlack(sibling->right)) {
-                    rotateRight(sibling);
+                    this->rotateRight(sibling);
                     sibling = parent->right;
                 }
 
@@ -116,13 +116,13 @@ protected:
                 black(sibling->right);
                 black(parent);
 
-                rotateLeft(parent);
+                this->rotateLeft(parent);
             }
         } else { // 右边为空，被删除节点的兄弟节点可能在左边
             if (isRed(sibling)) { // 兄弟节点是红色
                 black(sibling);
                 red(parent);
-                rotateRight(parent);
+                this->rotateRight(parent);
                 // 更换兄弟
                 sibling = parent->left;
             }
@@ -140,7 +140,7 @@ protected:
             } else { // 兄弟节点至少有一个红色子节点
                 // 兄弟节点的左子节点是黑色的，先对兄弟节点进行左旋转
                 if (isBlack(sibling->left)) {
-                    rotateLeft(sibling);
+                    this->rotateLeft(sibling);
                     sibling = parent->left;
                 }
 
@@ -148,7 +148,7 @@ protected:
                 black(sibling->left);
                 black(parent);
 
-                rotateRight(parent);
+                this->rotateRight(parent);
             }
         }
     }

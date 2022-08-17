@@ -65,8 +65,92 @@ protected:
         }
     }
 
-    virtual void afterRemove(Node<T> *node) {
+    virtual void afterRemove(Node<T> *node, Node<T> *replacement) {
+        // 如果删除的节点是红色
+        if (isRed(node)) {
+            return;
+        }
 
+        // 用于取代node的子节点是红色
+        if (isRed(replacement)) {
+            black(replacement);
+            return;
+        }
+
+        Node<T> *parent = node->parent;
+        // 删除的根节点
+        if (parent == nullptr) {
+            return;
+        }
+        
+        // 删除的是黑色叶子节点
+        bool left = parent->left == nullptr;
+        Node<T> *sibling = left ? parent->right : parent->left;
+        if (left) { // 左边为空，被删除节点的兄弟节点可能在右边
+            if (isRed(sibling)) { // 兄弟节点是红色
+                black(sibling);
+                red(parent);
+                rotateLeft(parent);
+                // 更换兄弟
+                sibling = parent->right;
+            }
+
+            // 执行到此，兄弟节点必然是黑色
+            if (isBlack(sibling->left) && isBlack(sibling->right)) {
+                // 兄弟节点没有一个红色子结点，父节点要向下跟子结点合并
+                bool parentBlack = isBlack(parent);
+                black(parent);
+                red(sibling);
+
+                if (parentBlack) {
+                    afterRemove(parent, nullptr);
+                }
+            } else { // 兄弟节点至少有一个红色子节点
+                // 兄弟节点的左子节点是黑色的，先对兄弟节点进行左旋转
+                if (isBlack(sibling->right)) {
+                    rotateRight(sibling);
+                    sibling = parent->right;
+                }
+
+                color(sibling, colorOf(parent));
+                black(sibling->right);
+                black(parent);
+
+                rotateLeft(parent);
+            }
+        } else { // 右边为空，被删除节点的兄弟节点可能在左边
+            if (isRed(sibling)) { // 兄弟节点是红色
+                black(sibling);
+                red(parent);
+                rotateRight(parent);
+                // 更换兄弟
+                sibling = parent->left;
+            }
+
+            // 执行到此，兄弟节点必然是黑色
+            if (isBlack(sibling->left) && isBlack(sibling->right)) {
+                // 兄弟节点没有一个红色子结点，父节点要向下跟子结点合并
+                bool parentBlack = isBlack(parent);
+                black(parent);
+                red(sibling);
+
+                if (parentBlack) {
+                    afterRemove(parent, nullptr);
+                }
+            } else { // 兄弟节点至少有一个红色子节点
+                // 兄弟节点的左子节点是黑色的，先对兄弟节点进行左旋转
+                if (isBlack(sibling->left)) {
+                    rotateLeft(sibling);
+                    sibling = parent->left;
+                }
+
+                color(sibling, colorOf(parent));
+                black(sibling->left);
+                black(parent);
+
+                rotateRight(parent);
+            }
+        }
     }
 
     virtual Node<T> *createNode(T element, Node<T> *node) {

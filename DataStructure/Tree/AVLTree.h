@@ -56,7 +56,7 @@ protected:
         }
     }
 
-    virtual void afterRemove(Node<T> * node) {
+    virtual void afterRemove(Node<T> *node, Node<T> *replacement) {
         while ((node = node->parent) != nullptr) {
             if (isBalanced(node)) {
                 // 更新高度

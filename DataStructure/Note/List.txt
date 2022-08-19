@@ -1,0 +1,22 @@
+线性表
+线性表是具有n个相同元素的有限序列（n>=0）
+常见的线性表有
+    数组
+    链表
+    栈
+    队列
+    哈希表（散列表）
+
+动态数组
+    动态数组接口设计
+    int size();
+    bool isEmpty();
+    bool contains(E element);
+    void add(E element);
+    E get(int index);
+    E set(int index, E element);
+    void add(int index, E element);
+    E remove(int index);
+    int indexOf(E element);
+    void clear();
+/******************************************************************/

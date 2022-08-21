@@ -1,0 +1,14 @@
+集合
+集合的特点
+    不存放重复的元素
+    常用于去重
+        存放新增IP，统计新增IP量
+        存放词汇，统计词汇量
+集合的接口
+int size();
+bool isEmpty();
+void clear();
+bool contains(T element);
+void add(T element);
+void remove(T element);
+void traversal(Visitor<T> visitor);

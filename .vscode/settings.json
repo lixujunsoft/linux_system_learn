@@ -19,6 +19,7 @@
         "memory_resource": "cpp",
         "queue": "cpp",
         "sstream": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "*.tcc": "cpp"
     }
 }

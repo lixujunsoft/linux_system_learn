@@ -1,4 +1,5 @@
 #include "./ListSet.h"
+#include "./TreeSet.h"
 
 template <typename T>
 class ValueVisitor: public Visitor<T> {
@@ -73,8 +74,41 @@ void test2() {
     listSet->traversal();
 }
 
+void test3() {
+    TreeSet<int> *treeSet = new TreeSet<int>();
+    treeSet->add(1);
+    treeSet->add(2);
+    treeSet->add(3);
+    treeSet->add(4);
+    treeSet->add(5);
+    treeSet->traversal();
+    delete treeSet;
+}
+
+void test4() {
+    TreeSet<Person> *treeSet = new TreeSet<Person>(new ValueVisitor<Person>());
+    treeSet->add(Person(1, "s_1"));
+    treeSet->add(Person(2, "s_2"));
+    treeSet->add(Person(3, "s_3"));
+    treeSet->add(Person(4, "s_4"));
+    treeSet->add(Person(5, "s_5"));
+    treeSet->add(Person(6, "s_6"));
+    treeSet->add(Person(7, "s_7"));
+    treeSet->add(Person(8, "s_8"));
+    treeSet->add(Person(9, "s_9"));
+    treeSet->add(Person(10, "s_10"));
+    treeSet->add(Person(11, "s_11"));
+    treeSet->add(Person(12, "s_12"));
+    treeSet->add(Person(13, "s_12"));
+    treeSet->add(Person(14, "s_12"));
+    treeSet->traversal();
+    delete treeSet;
+}
+
 int main()
 {
     // test1();
-    test2();
+    // test2();
+    // test3();
+    test4();
 }

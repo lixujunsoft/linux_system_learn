@@ -7,10 +7,14 @@ using namespace std;
 template <typename T>
 class ListSet : public Set<T> {
 public:
-    ListSet() {};
-    ListSet(Visitor<T> Visitor) : Set<T>(Visitor) {
+    ListSet() {
         linkList = new list<T>();
     }
+
+    ListSet(Visitor<T> *Visitor) : Set<T>(Visitor) {
+        linkList = new list<T>();
+    }
+
     ~ListSet() {
         delete linkList;
     }
@@ -38,7 +42,7 @@ public:
     }
 
     void add(T element) {
-        //linkList->remove(element);
+        remove(element);
         linkList->push_front(element);
     }
 
@@ -47,15 +51,15 @@ public:
     }
 
     void traversal() {
-        if (this->visitor ==  nullptr) {
-            return;
+        if (this->visitor != nullptr) {
+            for (typename list<T>::iterator it = linkList->begin(); it != linkList->end(); ++it) {
+                this->visitor->visit(*it);
+            }
+        } else {
+            for (typename list<T>::iterator it = linkList->begin(); it != linkList->end(); ++it) {
+                cout << *it << endl;
+            }
         }
-
-        typename list<T>::const_iterator it = linkList->begin();
-        cout << it;
-        //for (; it != linkList->end(); ++it) {
-        //    cout << *it << endl;
-        //}
     }
 private:
     list<T> *linkList;

@@ -1,0 +1,69 @@
+哈希冲突也叫做哈希碰撞
+2个不同的key，经过哈希函数计算出相同的结果
+
+解决哈希冲突的常见方法
+1.开放地址法
+  按照一定规则向其他地址探测，直到遇到空桶为之
+2.再哈希法
+  设计多个哈希函数
+3.链地址法
+  比如通过链表将同一索引的元素串起来
+
+JDK1.8的哈希冲突解决方案（链地址法：链表+红黑树）
+1.默认使用单向链表将元素串起来
+2.在添加元素时，可能会由单向链表转为红黑树
+  当哈希表容量>=64或者单向链表的节点数量>8
+  当红黑树节点树少到一定程度时，又会转为单向链表
+
+哈希函数
+哈希表中哈希函数的实现步骤大概如下
+1.先生成key的哈希函数对应的整数
+2.再让key的哈希值跟数组的大小进行相关运算，生成一个索引植
+  int hash(Object key) {
+    return hash_code(key) % table.length;
+  }
+  为了提高效率，可以使用&位运算取代%预算【前提：将数组长度设计为2的幂】
+   int hash(Object key) {
+    return hash_code(key) & (table.length - 1);
+  }
+
+良好的哈希函数
+让哈希值更加均匀分布-->减少哈希冲突次数-->提升哈希表的性能
+如何生成key的哈希值
+    不同种类的key，哈希值的生成方式不一样，但目标是一致的
+    1.尽量让每个key的哈希植是唯一的
+    2.尽量让key的所有信息参与运算
+
+    A.整数：
+    1.整数值当作哈希值
+    2.比如10的哈希值就是10
+
+    B.单精度浮点数：
+    1.将存储的二进制格式转为整数值
+
+    C.Log和Double的哈希值
+    高32位和低32位混合计算出哈希值
+    int hashCode(long value) {
+        return (int)(value ^ (value >>> 32));
+    }
+
+    int hashCode(double value) {
+        long bits = doubleToLongBits(value);
+        return (int)(bits ^ (bits >>> 32));
+    }
+    异或（相同为0,不同为1）
+
+    D.字符串的哈希值
+    1.比如字符串jack，由j、a、c、k四个字符组成（字符的本质就是一个整数）
+    2.因此，jack的哈希值可以表示为j * n3 + a * n2 + c * n1 + k * n0  ==> (((j * n) + a) * n + c) * n + k
+
+    int hashCode(string s) {
+        int hashValue = 0;
+        int len = s.length;
+        for (int i = 0; i < len; i++) {
+            char c = s[i];
+            // hashValue = hashValue * 31 + c;
+            hashValue = (hashValue << 5) - hashValue + c;
+        }
+        return hashValue;
+    }

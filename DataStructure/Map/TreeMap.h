@@ -74,6 +74,11 @@ public:
         this->comparator = comparator;
     }
 
+    ~TreeMap() {
+        clear();
+        delete comparator;
+    }
+
     int size() {
         return mapSize;
     }
@@ -83,7 +88,9 @@ public:
     }
 
     void clear() {
-        // TODO
+        Clear_PostOrder(root);
+        root = nullptr;
+        mapSize = 0;
     }
 
     V put(K key, V value) {
@@ -134,6 +141,7 @@ public:
 
     void traversal(Visitor<K, V> *visitor) {
         traversal(root, visitor);
+        delete visitor;
     }
 
 private:
@@ -483,6 +491,15 @@ private:
             cout << "[" << node->key << ":" << node->value << "] "; 
         }
         traversal(node->right, visitor);
+    }
+
+    void Clear_PostOrder(Node<K, V> *bstRoot)
+    {
+        if (bstRoot != nullptr) {
+            Clear_PostOrder(bstRoot->left);
+            Clear_PostOrder(bstRoot->right);
+            delete bstRoot;
+        }
     }
 
     Node<K, V> *red(Node<K, V> *node) {

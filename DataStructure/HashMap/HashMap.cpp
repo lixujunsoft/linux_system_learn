@@ -1,15 +1,28 @@
-#pragma once
-
 #include <iostream>
 #include <queue>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 #include "./Map.h"
+
+#define RED   false
+#define BLACK true
+
+using namespace std;
 
 class Key {
 public:
-    virtual int hashCode() {}
-    virtual bool equals() {}
+    virtual int hashCode() {
+        return 0;
+    }
+
+    virtual bool equals(Key *other) {
+        return false;
+    }
+
+    virtual string toString() {
+        return "";
+    }
 };
 
 template <typename K, typename V>
@@ -82,7 +95,7 @@ public:
         return HashMapSize == 0;
     }
 
-    virtual void clear() {根节点
+    virtual void clear() {
         if (HashMapSize == 0) {
             return;
         }
@@ -98,49 +111,20 @@ public:
 
         // 取出index位置的红黑树根节点
         Node<K, V> *root = table[idx];
-        return add(root, key, value, HashMapSize);
-    }
-
-    virtual V get(K key) {
-
-    }
-
-    virtual V remove(K key) {
-
-    }
-
-    virtual bool containsKey(K key) {
-
-    }
-
-    virtual bool containsValue(V value) {
-
-    }
-
-    virtual void traversal(Visitor<K, V> *visitor) {
-
-    }
-private:
-    private int index(K *key) {
-        unsigned int hash = ((Key<K>*)key)->hashCode();
-        return  (hash ^ (hash >> 16)) & (table.length - 1);
-    }
-
-/********************************************/
-    V add(Node<K, V> *root, K key, V value, int size) {
-        // 添加的是第一个节点
         if (root == nullptr) {
             root = new Node<K, V>(key, value, nullptr);
-            size++;
+            table[index] = root;
+            HashMapSize++;
             afterAdd(root);
             return V();
         }
+
         // 添加的不是第一个节点
         // 找到父节点
         Node<K, V> *parent = nullptr;
         Node<K, V> *node = root;
         int cmp = 0;
-        int h1 = ((Key<K>*)key)->hashCode();
+        int h1 = ((Key*)key)->hashCode();
         while (node != nullptr) {
             cmp = compare(key, node->key, h1, node->hash);
             parent = node;
@@ -150,8 +134,8 @@ private:
                 node = node->left;
             } else {
                 V oldValue = node->value;
-                node->key = key;
-                node->value = value;
+                node->key = *key;
+                node->value = *value;
                 return oldValue;
             }
         }
@@ -167,6 +151,37 @@ private:
         return V();
     }
 
+    virtual V *get(K *key) {
+
+    }
+
+    virtual V *remove(K *key) {
+
+    }
+
+    virtual bool containsKey(K *key) {
+        return false;
+    }
+
+    virtual bool containsValue(V *value) {
+        return false;
+    }
+
+    virtual void traversal(Visitor<K, V> *visitor) {
+
+    }
+private:
+    int index(K *key) {
+        unsigned int hash = (unsigned int)((Key*)key)->hashCode();
+        return  (hash ^ (hash >> 16)) & (currentTableLength - 1);
+    }
+
+    int index(Node<K, V> *node) {
+        unsigned int hash = (unsigned int)(node->hash);
+        return (node->hash ^ (node->hash >> 16)) && (currentTableLength - 1);
+    }
+
+/********************************************/
     void afterAdd(Node<K, V> *node) {
         Node<K, V> *parent = node->parent;
 
@@ -240,7 +255,7 @@ private:
         } else if (g->isRightChild()){
             g->parent->right = p;
         } else { // 根节点
-            root = p;
+            table[index(g->key)] = p;
         }
 
         // 更新child_p的parent
@@ -267,7 +282,7 @@ private:
         return nullptr;
     }
 
-    int compare(K key1, K key2, int h1, int h2) {
+    int compare(K *key1, K *key2, int h1, int h2) {
         // 比较hash值
         int result = h1 - h2;
         if (result != 0) {
@@ -275,8 +290,25 @@ private:
         }
 
         // 比较equals
+        Key *tmpKey1 = (Key*)key1;
+        Key *tmpKey2 = (Key*)key2;
+        if (tmpKey1->equals(tmpKey2)) {
+            return 0;
+        }
 
-        return 0;
+        // 哈希值相等，但是是不同实例
+        // 比较类名
+        if (tmpKey1 != nullptr && tmpKey2 != nullptr) {
+            string key1Cls = tmpKey1->toString();
+            string key2Cls = tmpKey2->toString();
+            result = key1Cls.compare(key2Cls);
+            if (result != 0) {
+                return result;
+            }
+        }
+
+        // 同一种类型(与视频教程中的不同，这里是通过内存地址进行比较的)
+        return tmpKey1 - tmpKey2;
     }
 
     Node<K, V> *color(Node<K, V> *node, bool color) {
@@ -508,3 +540,28 @@ private:
     int currentTableLength;
     Node<K, V> *table;
 };
+
+
+class Person : public Key{
+public:
+    virtual int hashCode() { 
+        return 0;
+    }
+
+    virtual bool equals(Key *other) {
+        return false;
+    }
+
+    virtual string toString() {
+        return "Key";
+    }
+};
+
+int main()
+{
+    Person *p1 = new Person();
+    HashMap<Key, int> *hashMap = new HashMap<Key, int>();
+    hashMap->put(p1, 10);
+    
+    return 0;
+}

@@ -20,6 +20,9 @@
         "queue": "cpp",
         "sstream": "cpp",
         "cmath": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "cstdlib": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
     }
 }

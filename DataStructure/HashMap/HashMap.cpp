@@ -11,10 +11,11 @@
 
 using namespace std;
 
-class Key {
+class IKey {
 public:
     virtual int hashCode() = 0;
-    virtual bool equals(Key *other) = 0;
+    virtual bool equals(IKey *other) = 0;
+    virtual string className() = 0;
     virtual string toString() = 0;
 };
 
@@ -33,7 +34,7 @@ public:
         this->left = nullptr;
         this->right = nullptr;
         this->color = RED;
-        this->hash = ((Key*)key)->hashCode();
+        this->hash = ((IKey*)key)->hashCode();
     }
 
     bool isLeaf() {
@@ -63,7 +64,7 @@ public:
         }
     }
 
-    Key *key;
+    IKey *key;
     int hash;
     V value;
     bool color;
@@ -121,7 +122,7 @@ public:
         Node<K, V> *parent = nullptr;
         Node<K, V> *node = root;
         int cmp = 0;
-        int h1 = ((Key*)key)->hashCode();
+        int h1 = ((IKey*)key)->hashCode();
         while (node != nullptr) {
             cmp = compare(key, node->key, h1, node->hash);
             parent = node;
@@ -177,12 +178,8 @@ public:
             while (!tmpQueue.empty()) {
                 Node<K, V> *node = tmpQueue.front();
                 tmpQueue.pop();
-                if (typeid(value) != typeid(node->value)) {
-                    continue;
-                } else {
-                    if (iValue->equals(&node->value)) {
-                        return true;
-                    }
+                if (typeid(*value) == typeid(node->value) && iValue->equals((IValue*)(&node->value))) {
+                    return true;
                 }
 
                 if (node->left != nullptr) {
@@ -193,18 +190,45 @@ public:
                     tmpQueue.push(node->right);
                 }
             } 
-                        
         }
         return false;
     }
 
     virtual void traversal(Visitor<K, V> *visitor) {
+        if (HashMapSize == 0) {
+            return;
+        }
+        
+        queue<Node<K, V>*> tmpQueue;
+        for (int i = 0; i < currentTableLength; i++) {
+            if (table[i] == nullptr) {
+                continue;
+            }
+            tmpQueue.push(table[i]);
+            while (!tmpQueue.empty()) {
+                Node<K, V> *node = tmpQueue.front();
+                tmpQueue.pop();
+                if (visitor != nullptr) {
+                    visitor->visit(node->key, &node->value);
+                } else {
+                    cout << node->key->toString() << ":" << node->value << " ";
+                }
 
+                if (node->left != nullptr) {
+                    tmpQueue.push(node->left);
+                }
+
+                if (node->right != nullptr) {
+                    tmpQueue.push(node->right);
+                }
+            } 
+        }
+        return;
     }
 private:
 
     int index(K *key) {
-        unsigned int hash = (unsigned int)((Key*)key)->hashCode();
+        unsigned int hash = (unsigned int)((IKey*)key)->hashCode();
         return  (hash ^ (hash >> 16)) & (currentTableLength - 1);
     }
 
@@ -301,7 +325,7 @@ private:
 
     Node<K, V> *node(K *key) {
         Node<K, V> *node = table[index(key)];
-        int h1 = key == nullptr ? 0 : ((Key*)key)->hashCode();
+        int h1 = key == nullptr ? 0 : ((IKey*)key)->hashCode();
         while (node != nullptr) {
             int cmp = compare(key, node->key, h1, node->hash);
             if (cmp == 0) {
@@ -323,8 +347,8 @@ private:
         }
 
         // 比较equals
-        Key *tmpKey1 = (Key*)key1;
-        Key *tmpKey2 = (Key*)key2;
+        IKey *tmpKey1 = (IKey*)key1;
+        IKey *tmpKey2 = (IKey*)key2;
         if (tmpKey1->equals(tmpKey2)) {
             return 0;
         }
@@ -332,8 +356,8 @@ private:
         // 哈希值相等，但是是不同实例
         // 比较类名
         if (tmpKey1 != nullptr && tmpKey2 != nullptr) {
-            string key1Cls = tmpKey1->toString();
-            string key2Cls = tmpKey2->toString();
+            string key1Cls = tmpKey1->className();
+            string key2Cls = tmpKey2->className();
             result = key1Cls.compare(key2Cls);
             if (result != 0) {
                 return result;
@@ -576,69 +600,80 @@ private:
 };
 
 
-class Person : public Key{
+class Person : public IKey{
 public:
+    Person(int id) : ID(id) {}
+    Person() : ID(0) {}
     virtual int hashCode() { 
-        return 0;
+        return ID;
     }
 
-    virtual bool equals(Key *other) {
+    virtual bool equals(IKey *other) {
         return false;
     }
 
-    virtual string toString() {
+    virtual string className() {
         return "Person";
     }
-};
-
-class Integer : public Key {
-public:
-    Integer(int value) {
-        this->value = value;
-    }
-
-    Integer() {
-        this->value = 0;
-    }
-
-    virtual int hashCode() { 
-        return 0;
-    }
-
-    virtual bool equals(Key *other) {
-        return false;
-    }
 
     virtual string toString() {
-        return "Integer";
+        return to_string(ID);
     }
 private:
-    int value;
+    int ID;
 };
 
-// value需要实现IValue接口
+class BankSaving : IValue {
+public:
+    virtual bool equals(IValue *other) {
+        return this->money == ((BankSaving*)other)->money;
+    }
+
+    BankSaving(int money) {
+        this->money = money;
+    }
+
+    BankSaving() {
+        this->money = 0;
+    }
+
+    friend ostream& operator<<(ostream& out, const BankSaving &bankSaving) {
+        out << bankSaving.money;
+        return out;
+    }
+private:
+    int money;
+};
+
+template <typename K, typename V>
+class MapVisitor : public Visitor<K, V> {
+    void visit(K *key, V *value) {
+        cout << ((IKey*)key)->toString() << ":" << value << " ";
+    }
+};
 
 int main()
 {
-    Person *p1 = new Person();
-    Person *p2 = new Person();
+    Person *p1 = new Person(1);
+    Person *p2 = new Person(2);
+    Person *p3 = new Person(3);
 
-    Integer *integer = new Integer(10);
+    BankSaving *pBs1 = new BankSaving(100);
+    BankSaving *pBs2 = new BankSaving(200);
+    BankSaving *pBs3 = new BankSaving(300);
 
-    int a = 10;
-    int b = 11;
-    int c = 12;
+    HashMap<IKey, BankSaving> *hashMap = new HashMap<IKey, BankSaving>();
     
-    HashMap<Key, int> *hashMap = new HashMap<Key, int>();
-    
-    hashMap->put(p1, &a);
-    hashMap->put(p2, &b);
-    hashMap->put(integer, &c);
-    cout << hashMap->size() << endl;
-    cout << hashMap->get(p1) << endl;
-    cout << hashMap->get(p2) << endl;
-    cout << hashMap->get(integer) << endl;
+    hashMap->put(p1, pBs1);
+    hashMap->put(p2, pBs2);
+    hashMap->put(p3, pBs3);
+    //cout << hashMap->size() << endl;
+    //cout << hashMap->get(p1) << endl;
+    //cout << hashMap->get(p2) << endl;
+    //cout << hashMap->get(p3) << endl;
 
-    cout << hashMap->containsValue(&b) << endl;
+    //cout << hashMap->containsValue(pBs3) << endl;
+    hashMap->traversal(nullptr);
+
     return 0;
 }

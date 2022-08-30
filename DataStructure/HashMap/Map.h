@@ -3,7 +3,7 @@
 template <typename K, typename V>
 class Visitor {
 public:
-    virtual void visit(K key, V value) {}
+    virtual void visit(K *key, V *value) {}
 };
 
 template <typename K, typename V>

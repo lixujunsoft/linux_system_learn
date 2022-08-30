@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <queue>
 #include "./Map.h"
 
 #define RED   false
@@ -12,24 +13,21 @@ using namespace std;
 
 class Key {
 public:
-    virtual int hashCode() {
-        return 0;
-    }
+    virtual int hashCode() = 0;
+    virtual bool equals(Key *other) = 0;
+    virtual string toString() = 0;
+};
 
-    virtual bool equals(Key *other) {
-        return false;
-    }
-
-    virtual string toString() {
-        return "";
-    }
+class IValue {
+public:
+    virtual bool equals(IValue *other) = 0;
 };
 
 template <typename K, typename V>
 class Node {
 public:
     Node(K *key, V *value, Node<K, V> *parent) {
-        this->key = *key;
+        this->key = key;
         this->value = *value;
         this->parent = parent;
         this->left = nullptr;
@@ -65,7 +63,7 @@ public:
         }
     }
 
-    K key;
+    Key *key;
     int hash;
     V value;
     bool color;
@@ -78,8 +76,7 @@ template <typename K, typename V>
 class HashMap : Map<K, V> {
 public:
     HashMap() {
-        table = (Node<K, V>*)malloc(sizeof(Node<K, V>*) * DEFAULT_CAPACITY);
-        memset(table, 0, sizeof(Node<K, V>*) * DEFAULT_CAPACITY);
+        table = new Node<K, V>* [DEFAULT_CAPACITY];
         currentTableLength = DEFAULT_CAPACITY;
     }
 
@@ -113,7 +110,7 @@ public:
         Node<K, V> *root = table[idx];
         if (root == nullptr) {
             root = new Node<K, V>(key, value, nullptr);
-            table[index] = root;
+            table[idx] = root;
             HashMapSize++;
             afterAdd(root);
             return V();
@@ -134,7 +131,7 @@ public:
                 node = node->left;
             } else {
                 V oldValue = node->value;
-                node->key = *key;
+                node->key = key;
                 node->value = *value;
                 return oldValue;
             }
@@ -146,24 +143,58 @@ public:
         } else {
             parent->left = newNode;
         }
-        size++;
+        HashMapSize++;
         afterAdd(newNode);
         return V();
     }
 
-    virtual V *get(K *key) {
-
+    virtual V get(K *key) {
+        Node<K, V> *getNode = node(key);
+        return getNode != nullptr ? getNode->value : V();
     }
 
-    virtual V *remove(K *key) {
-
+    virtual V remove(K *key) {
+        return remove(node(key));
     }
 
     virtual bool containsKey(K *key) {
-        return false;
+        return node(key) != nullptr;
     }
 
     virtual bool containsValue(V *value) {
+        if (HashMapSize == 0) {
+            return false;
+        }
+        
+        IValue *iValue = (IValue*)value;
+
+        queue<Node<K, V>*> tmpQueue;
+        for (int i = 0; i < currentTableLength; i++) {
+            if (table[i] == nullptr) {
+                continue;
+            }
+            tmpQueue.push(table[i]);
+            while (!tmpQueue.empty()) {
+                Node<K, V> *node = tmpQueue.front();
+                tmpQueue.pop();
+                if (typeid(value) != typeid(node->value)) {
+                    continue;
+                } else {
+                    if (iValue->equals(&node->value)) {
+                        return true;
+                    }
+                }
+
+                if (node->left != nullptr) {
+                    tmpQueue.push(node->left);
+                }
+
+                if (node->right != nullptr) {
+                    tmpQueue.push(node->right);
+                }
+            } 
+                        
+        }
         return false;
     }
 
@@ -171,6 +202,7 @@ public:
 
     }
 private:
+
     int index(K *key) {
         unsigned int hash = (unsigned int)((Key*)key)->hashCode();
         return  (hash ^ (hash >> 16)) & (currentTableLength - 1);
@@ -255,7 +287,7 @@ private:
         } else if (g->isRightChild()){
             g->parent->right = p;
         } else { // 根节点
-            table[index(g->key)] = p;
+            table[index(g)] = p;
         }
 
         // 更新child_p的parent
@@ -267,15 +299,16 @@ private:
         g->parent = p;
     }
 
-    Node<K, V> *node(Node<K, V> *root, K key) {
-        Node<K, V> *node = root;
+    Node<K, V> *node(K *key) {
+        Node<K, V> *node = table[index(key)];
+        int h1 = key == nullptr ? 0 : ((Key*)key)->hashCode();
         while (node != nullptr) {
-            int cmp = compare(key, node->key);
+            int cmp = compare(key, node->key, h1, node->hash);
             if (cmp == 0) {
                 return node;
             } else if (cmp > 0) {
                 node = node->right;
-            } else {
+            } else if (cmp < 0) {
                 node = node->left;
             }
         }
@@ -319,13 +352,13 @@ private:
         return node;
     }
 
-    V remove(Node<K, V> *root, Node<K, V> *bstNode) {
+    V remove(Node<K, V> *bstNode) {
         if (bstNode == nullptr) {
             return V();
         }
 
         V deleteValue = bstNode->value;
-        this->mapSize--;
+        HashMapSize--;
         if (bstNode->hasTwoChildren()) { // 度为2的节点
             Node<K, V> *s = this->successor(bstNode);
             // 用后继节点的值覆盖度为2的节点的值
@@ -336,12 +369,13 @@ private:
         }
         // 删除bstNode节点(bstNode节点的度必然是0或者1)
         Node<K, V> *replacement = bstNode->left != nullptr ? bstNode->left : bstNode->right;
+        int idx = index(bstNode);
         if (replacement != nullptr) { // bstNode是度为1的节点
             // 更改parent
             replacement->parent = bstNode->parent;
             // 更改parent的left、right的指向
             if (bstNode->parent == nullptr) {   // bstNode是度为1的节点，并且是根节点 
-                root = replacement;
+                table[idx] = replacement;
             } else if (bstNode == bstNode->parent->left) {
                 bstNode->parent->left = replacement;
             } else {
@@ -349,7 +383,7 @@ private:
             }
             afterRemove(bstNode, replacement); // 写到if里面是为了兼容红黑树
         } else if (bstNode->parent == nullptr) { // bstNode是叶子节点，并且是根节点
-            root = nullptr;
+            table[idx] = nullptr;
             afterRemove(bstNode, nullptr); // 写到if里面是为了兼容红黑树
         } else { // bstNode是叶子节点，但不是根节点
             if (bstNode == bstNode->parent->left) {
@@ -538,7 +572,7 @@ private:
     int HashMapSize;
     const int DEFAULT_CAPACITY = 16;
     int currentTableLength;
-    Node<K, V> *table;
+    Node<K, V> **table;
 };
 
 
@@ -553,15 +587,58 @@ public:
     }
 
     virtual string toString() {
-        return "Key";
+        return "Person";
     }
 };
+
+class Integer : public Key {
+public:
+    Integer(int value) {
+        this->value = value;
+    }
+
+    Integer() {
+        this->value = 0;
+    }
+
+    virtual int hashCode() { 
+        return 0;
+    }
+
+    virtual bool equals(Key *other) {
+        return false;
+    }
+
+    virtual string toString() {
+        return "Integer";
+    }
+private:
+    int value;
+};
+
+// value需要实现IValue接口
 
 int main()
 {
     Person *p1 = new Person();
-    HashMap<Key, int> *hashMap = new HashMap<Key, int>();
-    hashMap->put(p1, 10);
+    Person *p2 = new Person();
+
+    Integer *integer = new Integer(10);
+
+    int a = 10;
+    int b = 11;
+    int c = 12;
     
+    HashMap<Key, int> *hashMap = new HashMap<Key, int>();
+    
+    hashMap->put(p1, &a);
+    hashMap->put(p2, &b);
+    hashMap->put(integer, &c);
+    cout << hashMap->size() << endl;
+    cout << hashMap->get(p1) << endl;
+    cout << hashMap->get(p2) << endl;
+    cout << hashMap->get(integer) << endl;
+
+    cout << hashMap->containsValue(&b) << endl;
     return 0;
 }

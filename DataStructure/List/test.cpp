@@ -17,7 +17,7 @@ public:
         this->name = name;
     }
 
-    ~Person() {
+    virtual ~Person() {
         cout << "~Person()" << endl;
     }
 

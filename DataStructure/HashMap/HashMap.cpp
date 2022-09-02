@@ -178,7 +178,7 @@ public:
             while (!tmpQueue.empty()) {
                 Node<K, V> *node = tmpQueue.front();
                 tmpQueue.pop();
-                if (typeid(*value) == typeid(node->value) && iValue->equals((IValue*)(&node->value))) {
+                if (iValue->equals((IValue*)(&node->value))) {
                     return true;
                 }
 

@@ -40,9 +40,36 @@ std::weak_ptr
         1. passing by value
                 需要用std::move来转移内存拥有权
                 如果参数直接传入std::make_unique语句，自动转换为move
-        2. passing by reference
+        2. passing by reference (传引用)
                 如果设置参数为const则不能改变指向，比如reset()
                 reset()方法是智能指针的清空方法
         3. return by value
                 指向一个local object
                 可以用作链式函数
+计数指针：shared_ptr
+    1. shared_ptr创建了一个计数器与类对象所指的内存相关联
+    2. Copy则计数器加一，销毁则计数器减一
+    3. api为use_count()
+
+    shared_ptr与函数
+        1. passed by value
+            Copy
+            函数内部计数器加一
+        2. passed by reference
+            const表示不可改变指向
+        3. return by value
+            链式调用
+shared_ptr与unique_ptr
+    1. 不能将shared_ptr转换为unique_ptr
+    2. unique_ptr可以转换为shared_ptr，通过std::move来转移内存拥有权
+    unique_ptr一般作为函数的返回植使用，这样可以提高代码的复用率
+
+弱引用：weak_ptr
+    特点：
+        1. weak_ptr并不拥有所有权
+        2. 不能调用->和解引用*
+    waek_ptr为什么会存在（情景分析）：
+        1. A类中有一个需求需要存储其他A类对象的信息
+        2. 如果使用shared_ptr，那么在销毁时遇到循环依赖的问题
+        3. 所以我们这里需要用一个不需要所有权的指针来标记该同类对象
+           weak_ptr可以通过lock()函数来提升为shared_ptr(类型转换)

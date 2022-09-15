@@ -1,0 +1,55 @@
+1.查看docker中运行的容器
+  docker ps     查看当前docker引擎中正在运行的容器
+  docker ps -a  查看所有容器(运行 停止)
+2.运行一个容器
+  docker run 镜像名|镜像id
+  a. docker run tomcat:8.0
+  b. docker run -p 8080(宿主机):8080 tomcat:8.0
+     注：可以映射多个窗口 -p 15672:15672 -p 5672:5672
+  c. 运行tomcat，开发端口映射，后台启动该服务 -d
+     docker run -p 8082:8080 -d tomcat:8.0
+  d. 运行tomcat，开放端口映射，后台启动该服务，指定容器名称 --name 容器名称
+     docker run -d -p 8083:8080 --name tomcat01 tomcat:8.0
+3.停止、启动、重启、暂停、恢复容器
+  docker stop 容器id|容器名称
+  docker start 容器id容器名称
+  docker restart 容器id|容器名称
+  docker pause 容器id|容器名称       暂停
+  docker unpause 容器id|容器名称     恢复
+4.杀死容器
+  docker kill 容器id|容器名称
+5.删除容器
+  docker rm 容器id|容器名称          删除已经停止的容器
+  docker rm -f 容器id|容器名称       强制删除（即使在运行的容器也能删除）
+  docker rm -f $(docker ps -qa)    删除所有容器
+6.查看容器内部日志
+  docker logs 容器id|name
+  docker logs -f 容器id|name       实时监控容器内服务的日至
+7.进入容器的内部
+  docker exec -it(交互模式) 容器id|容器名称 bash
+  docker exec -it tomcat01 bash
+  exit                             退出容器内部
+8.容器与宿主机器docker之间的文件拷贝
+  a.将容器中指定文件和目录拷贝到宿主机
+    docker cp 容器id：容器中的文件或者目录 宿主机的目录
+    docker cp tomcat01:/usr/local/tomcat/webapps .
+  b.将主机中指定文件和目录拷贝到容器内
+    docker cp 主机上文件和目录 容器id：容器中的目录
+**********************************************************
+9.查看容器内运行的进程
+  docker top
+  docker inspect 容器id：容器名称
+10.容器的数据卷机制
+  a. 数据卷 Data Volume
+     作用：用来实现容器中数据和宿主机中数据进行映射的(同步的)
+     注意：数据卷使用必须在容器首次启动时设置
+     使用：docker run -v 宿主机目录：容器内目录 ......
+     1. 使用绝对路径设置数据卷
+        docker run -v 宿主机绝对路径：容器内路径:(ro) ......
+        ro: read only 如果在设置数据卷时指定ro，代表日后容器内的路径是只读的
+        注意：这种方式会将容器路径的原始内容全部清空，始终以宿主机路进为主
+     2. 使用别名方式设置数据
+        docker run -v aa:/usr/local/tomcat/webapps ..
+        aa: 代表docker数据卷中别名 注意：这个别名如果存在docker直接使用 aa 不存在自动创建
+                                     使用别名方式保留容器路径中的原始内容 
+     

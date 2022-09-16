@@ -1,0 +1,150 @@
+1.查看docker中运行的容器
+  docker ps     查看当前docker引擎中正在运行的容器
+  docker ps -a  查看所有容器(运行 停止)
+2.运行一个容器
+  docker run 镜像名|镜像id
+  a. docker run tomcat:8.0
+  b. docker run -p 8080(宿主机):8080 tomcat:8.0
+     注：可以映射多个窗口 -p 15672:15672 -p 5672:5672
+  c. 运行tomcat，开发端口映射，后台启动该服务 -d
+     docker run -p 8082:8080 -d tomcat:8.0
+  d. 运行tomcat，开放端口映射，后台启动该服务，指定容器名称 --name 容器名称
+     docker run -d -p 8083:8080 --name tomcat01 tomcat:8.0
+3.停止、启动、重启、暂停、恢复容器
+  docker stop 容器id|容器名称
+  docker start 容器id容器名称
+  docker restart 容器id|容器名称
+  docker pause 容器id|容器名称       暂停
+  docker unpause 容器id|容器名称     恢复
+4.杀死容器
+  docker kill 容器id|容器名称
+5.删除容器
+  docker rm 容器id|容器名称          删除已经停止的容器
+  docker rm -f 容器id|容器名称       强制删除（即使在运行的容器也能删除）
+  docker rm -f $(docker ps -qa)    删除所有容器
+6.查看容器内部日志
+  docker logs 容器id|name
+  docker logs -f 容器id|name       实时监控容器内服务的日至
+7.进入容器的内部
+  docker exec -it(交互模式) 容器id|容器名称 bash
+  docker exec -it tomcat01 bash
+  exit                             退出容器内部
+8.容器与宿主机器docker之间的文件拷贝
+  a.将容器中指定文件和目录拷贝到宿主机
+    docker cp 容器id：容器中的文件或者目录 宿主机的目录
+    docker cp tomcat01:/usr/local/tomcat/webapps .
+  b.将主机中指定文件和目录拷贝到容器内
+    docker cp 主机上文件和目录 容器id：容器中的目录
+**********************************************************
+9.查看容器内运行的进程
+  docker top
+  docker inspect 容器id：容器名称
+10.容器的数据卷机制
+  a. 数据卷 Data Volume
+     作用：用来实现容器中数据和宿主机中数据进行映射的(同步的)
+     注意：数据卷使用必须在容器首次启动时设置
+     使用：docker run -v 宿主机目录：容器内目录 ......
+     1. 使用绝对路径设置数据卷
+        docker run -v 宿主机绝对路径：容器内路径:(ro) ......
+        ro: read only 如果在设置数据卷时指定ro，代表日后容器内的路径是只读的
+        注意：这种方式会将容器路径的原始内容全部清空，始终以宿主机路进为主
+     2. 使用别名方式设置数据
+        docker run -v aa:/usr/local/tomcat/webapps ..
+        aa: 代表docker数据卷中别名 注意：这个别名如果存在docker直接使用 aa 不存在自动创建
+                                     使用别名方式保留容器路径中的原始内容
+        注意：docker根据别名创建目录默认在：/var/lib/docker/volumes
+11.docker核心概念
+   a. 仓库：repostory
+      作用：docker官方维护一个仓库，用来集中存储镜像
+   b. 镜像：Image
+      作用：一个镜像代表一个软件服务
+      特点：只读
+   c. 容器：container
+      作用：镜像每运行一次形成一个容器，运行的容器代表一个运行的软件服务
+      特点：可读可写
+12.将修改的容器打包成一个新的镜像
+   a. 为什么要将容器打包成一个新的镜像
+      元应：容器可读可写，基于这个特性，我们可以堆容器进行自己深度定制，将容器打包成一个新的镜像，日后
+           基于这个镜像运行成容器存在原始定制特性
+   b. 将容器打包成一个新的镜像
+      docker commit -m "描述信息" -a "作者信息" 容器id|容器名称 打包的镜像名称：标签
+      例如：docker commit -m "deploy test project in webapps" -a "lixujun" tomcat01 tomcat-test:8.0
+13.镜像的备份和恢复
+   备份镜像：docker save 镜像名:标签 -o xxx.tar
+   例如：docker save tomcat:8.0 -o tomcat:8.0.tar
+   恢复镜像：docker load -i tomcat:8.0.tar
+************************************************************************
+docker 镜像原理
+1.镜像是什么
+  镜像是一种轻量级的，可执行的独立软件包，用来打包软件运行环境和基于运行环境开发的软件，它包含运行某个独立软件所需的所有内容，包含代码、运行时
+  所需的库、环境变量和配置文件
+2.UnionFs 联合文件系统 叠加文件系统
+  原理：就是一次同时加载多个文件系统，但从外面看起来，只能看到一个文件系统，联合加载会把各层文件系统叠加起来，这样最终的文件系统会包含所有底层的文件和目录
+************************************************************************
+容器间通信--网络使用
+1.容器间通信
+  说明：容器之间通过网络进行相互通信
+  官方说明:
+    a. 当Docker启动时，会自动在主机上创建一个docker0虚拟网桥，实际上是linux的一个bridge，可以理解为一个软件交换机。它会挂载到它的网口之间进行转发
+    b. 同时Docker随即分配一个本地未占用的私有网段(在RFC1918中定定义)中的一个地址给docker0接口。比如典型的172.17.42.1，掩码为255.255.0.0，此后
+       启动的容器内的网口也会自动分配一个同一个网段(172.17.0.0/16)地址
+    c. 当创建一个Docker容器的时候，同时会创建一对veth pair接口(当数据包发送一个接口时，另外一个接口也可以收到相同的数据包)。这对接口一端在容器内，即eht0；
+       另一端在本地并被挂载到docker0网桥，名称以veth开头(vethAQI2QT)。通过这种方式，主机可以跟容器通信，容器之间也可以相互通信。Docker就创建了在主机和所有
+       容器之间一个共享虚拟网络
+  网络总结：
+    默认docker在创建容器时将所有容器都连接到docker0网桥上，默认在docker0网桥的容器都可以使用ip地址进行通信；默认在docker0网桥的容器都可以使用容器名称
+    作为容器id进行通信（注意：使用容器名称必须自定义网桥，不能使用默认网桥）
+2.自定义网桥实现网桥中的一组容器通信
+    a. docker中的网桥类型
+       NETWORK ID     NAME      DRIVER    SCOPE
+       7fe71cd4f94a   bridge    bridge    local
+       1986b3a73cf3   host      host      local
+       6590ff95057d   none      null      local
+
+       docker中的网络类型：bridge、host、null
+    b. 创建自定义网桥
+       docker network create -d bridge(默认) 网络名称
+    c. 查看网络
+       docker network ls
+    d. 查看某一个网络细节
+       docker network inspect 网络名称
+    e. 删除一个网络
+       docker network rm 网络名称
+       docker network prune 删除所有未被用到的网络名
+    f. 在指定的网络中运行多个容器
+       a. 启动之前明确指定容器使用那个网络 
+          docker run -d -p --network 网络名称
+          例如：docker run -d -p 8080:8080 --name tomcat01 --network ems tomcat:8.0
+       b. 启动之后让容器加入到某个网络中
+          docker network connect 网络名 容器id|容器名称
+************************************************************************
+高级数据卷配置
+1.数据卷 Volume
+  定义：用来实现宿主机和容器之间文件和目录的映射同步
+2.数据卷使用 -v 宿主机路径：容器内路径
+  注意：必须在容器首次启动时指定      
+  a. 使用绝对路径设置数据卷
+     docker run -v /root/datas:/usr/local/tomcat/webapps .... tomcat:8.0
+  b. 使用别名方式设置数据卷
+     docker run -v bb:/usr/local/tomcat/webapps .... tomcat:8.0
+     注意：bb 代表一个数据卷的别名
+             这个数据别名可以存在，也可以不存在docker首次用到时自动创建
+             第一次使用别名时容器中的原始数据会保留下来，使用绝对路径方式不会保留容器中的原始数据
+3.别名到底是什么
+  别名代表一个docker自身维护的数据卷
+  1.查看所有docker维护的数据卷
+    docker volume ls  列出docker维护的所有数据卷
+  2.查看数据卷详细内容
+    docker inspect 数据卷别名
+    docker volume inspect 查看网桥
+  3.删除一个数据卷
+    docker volume rm 数据卷别名
+  4.创建一个别名数据
+    docker valume create 数据卷别名
+
+
+    
+    
+
+  
+    

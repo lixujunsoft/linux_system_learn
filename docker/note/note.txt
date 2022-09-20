@@ -1,3 +1,7 @@
+docker中文参考书册
+https://yeasy.gitbook.io/docker_practice/
+**********************************************************
+
 1.查看docker中运行的容器
   docker ps     查看当前docker引擎中正在运行的容器
   docker ps -a  查看所有容器(运行 停止)
@@ -210,7 +214,66 @@ CMD & ENTRPOINT详解
   a.创建一个项目，mkdir ems
   b.在ems目录下创建一个docker-compose.yml模板文件
 
+************************************************************************
+docker-compose模板命令
+1.docker-compose.yml中支持的模板命令
+  1). build               通过docker-compose在启动容器之前根据dockerfile构建镜像，然后根据构建镜像启动容器
+  2). command             覆盖容器启动后默认执行的指令 <==> docker run image test.jar
+  3). container_name      用来指定docker-compose启动容器的名称， 注意：不推荐使用容器名称
+  4). depends_on          解决容器的依赖、启动先后的问题
+                          注意：当前服务不会等待被依赖的服务完全启动之后才启动
+  5). environment         用来给容器指定环境变量，相当于docker -run -e 选项
+  6). env_file            用来给容器启动指定环境变量文件，相当于docker run -e 选项
+  7). expose              用来指定构建镜像过程中容器暴露的端口号(注：一般情况下不使用，使用原始的Dockerfile暴露)
+  8). image               用来指定启动容器使用的镜像是谁，相当于docker run + 镜像名
+  9). network             用来指定启动的容器使用的网桥，相当于docker run --network
+  10).ports               用来指定容器和宿主机端口映射
+  11).volumes             用来指定容器中的目录和宿主机中目录的映射
+  12).restart             用来指定docker容器总是运行，相当于docker run --restart=always
 
+************************************************************************
+docker-compose常用命令
+1.docker-compose 项目|项目中的某个服务 注意：如果没有特殊说明，默认是都是对项目操作
+2.docker-compose命令详解
+  1).up
+     格式：docker-compose up [options] [SERVICE...]
+     该命令特别强大，它将尝试自动完成包括构建镜像，(重新)创建服务，启动服务，并关联相关容器的一系列操作
+     链接的服务都将会被自动启动，除非已经处于运行状态
+     可以说，大部分时候都可以通过该命令启动一个项目
+     默认情况，docker-compose up启动的容器都在前台，控制台将会同时打印所用容器的输出信息，可以很方便进行调试
+     当通过ctrl-c停止命令时，所有容器将会停止
+     如果使用docker-compose up -d，将会在后台启动并运行所有容器。一般推荐生产环境下使用
+     默认情况，如果服务器已经存在，docker-compose up将会尝试停止容器，然后重新创建(保持使用volumes-from挂载的卷)，以保证新启动的服务匹配docker-compose.yml文件的最新内容
+  
+    docker-compose up         对整个项目操作
+    docker-compose 服务id     对当前docker-compose中对应服务id容器操作
+  2).down
+     docker-compose down          对整个项目操作
+     docker-compose down 服务id 
+     注：docker-compose down 关闭所有容器并移除网络
+  3).exec
+     docker-compose exec 服务id bash
+     作用：进入某个服务内部
+  4).ps 
+     docker-compose ps
+     作用：列出所用运行的服务
+  5).restart
+     docker-compose restart   对整个项目的操作
+     docker-compose restart -t 服务id
+     作用：重启整个项目服务或指定的服务
+  6).rm
+     docker-compose rm [服务id] 
+     作用：删除整个项目或者指定id服务
+     docker-compose rm -v(删除容器所挂载的数据卷) [服务id]
+  7).top
+     docker-compose top [服务id]
+     作用：查看整个项目中所有容器内运行的进程或查看某个指定id服务的容器的进程
+  8).pause 暂停 unpause 恢复
+     docker-compose pause | unpause [服务id]
+     作用：暂停和恢复整个项目的所有服务或者指定id的某个服务
+  9).logs
+     docker-compose logs 查看整个项目的日志
+     docker-compose logs -f(实时) [服务id] 
     
     
 

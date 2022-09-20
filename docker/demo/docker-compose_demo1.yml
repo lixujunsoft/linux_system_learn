@@ -1,0 +1,47 @@
+version: "3.8"
+
+#管理一组服务
+services:
+  tomcat:
+    image: tomcat:8.0
+    ports:
+      - "8080:8080"
+    networks:
+      - dangdang
+
+  apps:
+    #build: ./    #指定Dockerfile的上下文目录，一切都是默认值
+    build:
+      context: ./               #用来指定Dockerfile上下文目录
+      dockerfile: Dockerfile    #用来指定Dockerfile的文件名
+    
+    ports:
+      - "8080:8080"
+    
+    command: ["test.jar"]       #用来覆盖容器启动之后默认执行的指令，类似于 docker run image + 覆盖命令
+    
+  
+  mysql:
+    image: mysql:5.6
+    ports:
+      - "3306:3306"
+    #environment:
+    #  MYSQL_ROOT_PASSWORD: root
+        #- "MYSQL_ROOT_PASSWORD=root"
+
+    env_file:
+      - ./.env
+
+    networks:
+      - dangdang
+
+    volumes:
+      - mysqlData:/var/lib/mysql
+
+#声明使用的网桥
+networks:
+  dangdang:
+
+#声明别名数据卷
+volumes:
+  mysqlData:

@@ -142,6 +142,74 @@ docker 镜像原理
   4.创建一个别名数据
     docker valume create 数据卷别名
 
+************************************************************************
+Dockerfile
+1.Dockerfile是什么
+  Dockerfile是镜像描述文件
+2.Dockerfile作用
+  通过Dockerfile文件构建一个属于自己的镜像
+3.为什么使用Dockerfile构建镜像
+  官方镜像确实足够好了，足够适用于大多数应用程序，但是如果我们想自己构建属于我们自己的业务镜像，这时候必须自定义镜像
+4.如何通过Dockerfile构建自己的镜像
+  编写Dockerfile相关语法
+5.通过Dockerfile文件构建镜像
+  docker build -t aa:1.0 .(指定Dockerfile文件所在位置)
+
+Dockerfile的保留命令
+FROM        当前镜像是基于那个镜像的，第一个指令必须是FROM
+MAINTAINER  镜像维护者的姓名和油箱地址(已废弃)
+RUN         构建镜像时需要运行的指令
+EXPOSE      当前容器对外暴露的端口号(仅用于声明，告诉使用者容器对外暴露的端口)
+ENV         用来在构建镜像过程中设置环境变量
+ADD         将宿主机目录下的文件拷贝进镜像且ADD命令会自动处理URL和解压tar包
+COPY        类似于ADD，拷贝文件和目录到镜像中
+            将从构建上下文目录中<原路径>的文件/目录复制到镜像内的<目标路径>位置
+VOLUME      容器数据卷，用于数据保存和持久化
+CMD         指定一个容器启动时要运行的命令
+            Dockerfile中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的参数替换
+ENTRPOINT   指定一个容器启动时要运行的命令
+            ENTRPOINT的目的和CMD一样，都是在指定容器启动程序及其参数
+
+CMD & ENTRPOINT详解
+1.CMD & ENTRPOINT作用
+  作用：都是用来指定容器启动时默认执行的指令
+  注意：CMD指令可以存在多个，但是存在多个只有最后一个生效
+2.使用语法
+  CMD & ENTRPOINT
+  1).直接命令方法
+     java -jar ems.jar
+  2).json树组方法
+     ["java", "-jar", "ems.jar"]
+3.区别
+  1).cmd里面的命令如何在运行容器时进行覆盖
+     docker run 镜像：版本号 覆盖自己定义命令 ls /
+  2).ENTRPOINT里面命令如何在运行容器时进行覆盖
+     docker run --entrypoint=覆盖指令 镜像：版本号 传递参数
+4.如何使用
+  entrypoint 用来书写一个容器固定指令
+  cmd 用来给entry传递参数
+  注意：配合使用时必须使用josn数组语法
+
+************************************************************************
+现有的docker进行项目部署存在的问题
+1.为了完成一个完整项目势必用到N多个容器配合完成项目中业务开发，一旦引入N多个容器，N多个容器之间
+  就会形成某种依赖，容器的编排显得至关重要
+2.现在这种方式使用容器，没有办法站在项目的角度将一个项目中用到的一组容器划分到一起
+
+************************************************************************
+1.docker compose
+  定义：“compose”项目是Docker官方的开源项目，负责实现对Docker容器的快速编排
+  快速编排：站在项目角度将一组相关联容器整合在一起，对这组容器进行按照指定的顺序启动
+          也就是说，compose是用来对多个容器进行管理的
+2.如何使用docker-compose项目
+  project项目：由一组关联的应用容器组成一个完整的业务单元，在“docker-compose.yml”文件中定义
+  service：一个项目中的容器称之为一个服务
+3.docker-compose安装
+  注意：只有在linux平台上安装docker时没有安装docker-compose，windows、macos安装时自动安装docker-compose
+4.docker-compose第一个案例
+  a.创建一个项目，mkdir ems
+  b.在ems目录下创建一个docker-compose.yml模板文件
+
 
     
     

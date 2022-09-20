@@ -1,2 +1,0 @@
-1.Dockerfile是镜像的描述文件
-2.可以通过Dockerfile文件构建一个属于自己的镜像

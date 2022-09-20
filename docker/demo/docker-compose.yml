@@ -1,0 +1,25 @@
+#代表使用docker-compose项目的版本号
+version: "3.8"
+services:
+
+  tomcat:
+    image: tomcat:8.0 #代表使用那个镜像，类似于docker run 指定的镜像名称
+    ports:            #代表宿主机和容器中的端口映射，类似于docker run -p参数
+      - 8080:8080
+
+  tomcat01:
+    image: tomcat:8.0
+    ports:
+      - 8081:8080
+  
+  mysql:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+    volumes:
+      # - /home/lixujun/tmp/ems/mysqldatas:/var/lib/mysql
+      - mysqldatas:/var/lib/mysql
+volumes:
+  mysqldatas: #声明数据卷别名

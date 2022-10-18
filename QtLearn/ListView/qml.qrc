@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MyListView.qml</file>
+        <file>MyRectListView.qml</file>
+        <file>MySecListView.qml</file>
+    </qresource>
+</RCC>

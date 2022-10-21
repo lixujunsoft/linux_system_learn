@@ -41,7 +41,26 @@ Window {
     Component {
         id: com
         Button {
+            id: btn
+            width: 100
+            height: 50
+            /*
+            signal btnSig(int value)
+            onClicked: {
+                // console.log("123");
+                btnSig(10);
+            }
+            */
 
+            background: Rectangle {
+                anchors.fill: parent
+                border.color: btn.activeFocus ? "blue" : "black"
+            }
+
+            signal leftBtnPressed()
+            Keys.onLeftPressed: {
+                leftBtnPressed()
+            }
         }
     }
 
